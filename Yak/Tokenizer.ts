@@ -1,10 +1,6 @@
-import { Token } from "./types.ts";
+import { Token, TokenType } from "./types.ts";
 
 const functionNameReg = /^[A-Za-z][A-Za-z_]*$/;
-
-const point = (str: string[], pos: number) =>
-  str.map((str, n) => `${n === pos ? "-->" : ""}${n + 1}: ${str}`)
-    .join("\n");
 
 const splitString = (str: string) => str.trim().split(/[\s]+/);
 
@@ -15,73 +11,80 @@ const tokenizer = (input: string): Token[] => {
     return tokens;
   }
 
+  const pushToken = (token: TokenType, error = "") =>
+    tokens.push({
+      ...token,
+      lineNumber: tokens.length + 1,
+      errors: error ? [error] : [],
+    });
+
   const arr = splitString(input);
 
   for (let cursor = 0; cursor < arr.length; cursor++) {
     const token = arr[cursor];
 
     if (!isNaN(Number(token))) {
-      tokens.push({ type: "NUMBER", value: Number(token) });
+      pushToken({ type: "NUMBER", value: Number(token) });
       continue;
     }
 
-    if (token === ".") {
-      tokens.push({ type: "UNARY_OPERATOR", value: token });
+    if (token === "." || token === "@") {
+      pushToken({ type: "UNARY_OPERATOR", value: token });
       continue;
     }
 
     if (
       token === "+" || token === "-" || token === "*" || token === "%" ||
-      token === "=="
+      token === "==" || token === "|" || token === "&" || token === "^" ||
+      token === "<->" || token === "<^>" || token === "<<<"
     ) {
-      tokens.push({ type: "BINARY_OPERATOR", value: token });
+      pushToken({ type: "BINARY_OPERATOR", value: token });
       continue;
     }
 
     if (token === "!" || token === "?") {
-      tokens.push({ type: "CONDITIONAL", value: token });
+      pushToken({ type: "CONDITIONAL", value: token });
       continue;
     }
 
     if (token === "{") {
-      tokens.push({ type: "LEFT_BRACKET" });
+      pushToken({ type: "LEFT_BRACKET", value: "{" });
       continue;
     }
 
     if (token === "}") {
-      tokens.push({ type: "RIGHT_BRACKET" });
+      pushToken({ type: "RIGHT_BRACKET", value: "}" });
       continue;
     }
 
     if (token.includes("#")) {
       const [arity, name] = token.split("#");
+
+      let error = "";
+
       if (isNaN(Number(arity))) {
-        throw new Error(
-          `Expected Number: ${arity} \n ${point(arr, cursor)}`,
-        );
+        error += `Expected Number: ${arity}`;
       }
       if (!functionNameReg.test(name)) {
-        throw new Error(
-          `Expected ${functionNameReg}:\n ${point(arr, cursor)}`,
-        );
+        if (error) error += "\n";
+        error += `Expected function name ${functionNameReg}: ${name}`;
       }
-      tokens.push({
+
+      pushToken({
         type: "IDENTIFIER",
         value: token,
         arity: Number(arity),
         name: name,
-      });
+      }, error);
       continue;
     }
 
     if (functionNameReg.test(token)) {
-      tokens.push({ type: "FUNCTION_NAME", value: token });
+      pushToken({ type: "FUNCTION_NAME", value: token });
       continue;
     }
 
-    throw new Error(
-      `Invalid token: ${token} \n ${point(arr, cursor)}`,
-    );
+    pushToken({ type: "UNKNOWN", value: token }, "Unknown Token");
   }
 
   return tokens;

@@ -1,6 +1,17 @@
-export type BinaryOperator = "+" | "-" | "*" | "%" | "==";
-export type UnaryOperator = ".";
-export type Conditional = "?" | "!"
+export type BinaryOperator =
+  | "+"
+  | "-"
+  | "*"
+  | "%"
+  | "=="
+  | "|"
+  | "&"
+  | "^"
+  | "<->" // swap
+  | "<^>" // over
+  | "<<<"; // rot
+export type UnaryOperator = "." | "@";
+export type Conditional = "?" | "!";
 
 interface NumberToken {
   type: "NUMBER";
@@ -28,10 +39,12 @@ interface IdentifierToken {
 
 interface LeftBracketToken {
   type: "LEFT_BRACKET";
+  value: "{";
 }
 
 interface RightBracketToken {
   type: "RIGHT_BRACKET";
+  value: "}";
 }
 
 interface ConditionalToken {
@@ -44,14 +57,27 @@ interface FunctionToken {
   value: string;
 }
 
-export type Token =
+interface UnknownToken {
+  type: "UNKNOWN";
+  value: string;
+}
+
+export type TokenType =
   | NumberToken
   | OperatorToken
   | IdentifierToken
   | LeftBracketToken
   | RightBracketToken
   | ConditionalToken
-  | FunctionToken;
+  | FunctionToken
+  | UnknownToken;
+
+interface BaseToken {
+  lineNumber: number;
+  errors: string[];
+}
+
+export type Token = TokenType & BaseToken;
 
 /**
  * NODES -> STATEMENT (NODES | <EMPTY>)
@@ -97,9 +123,7 @@ interface Scope {
   functions: { [name: string]: FunctionDefNode };
 }
 
-type Nodes = Statement[];
-
-export type Statement = FunctionDefNode | ExpressionNode;
+type Nodes = ExpressionNode[];
 
 export interface FunctionDefNode {
   type: "FUNCTION_DEF";
@@ -136,8 +160,14 @@ interface UnaryOperatorNode {
   value: UnaryOperator;
 }
 
-type ExpressionNode =
+export type NodeType =
   | NumberNode
   | FunctionCallNode
   | OperatorNode
   | ConditionalNode;
+
+interface BaseNode {
+  lineNumber: number;
+}
+
+export type ExpressionNode = NodeType & BaseNode;

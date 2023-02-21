@@ -15,14 +15,24 @@ const Input: FunctionComponent<Props> = ({ onSubmit }) => {
   });
 
   const handleSubmit = (text: string) => {
-    console.log(`Submitting: ${text}`);
-    // Add your submission logic here
     onSubmit(text);
   };
 
   return (
     <div class="w-full h-full flex flex-col">
-      <textarea class="w-full h-full"></textarea>
+      <textarea class="w-full h-full">
+        {`1#fib
+  {
+     . . 1 == <-> 0 == | !
+     {
+        . 1 - fib
+        <-> 2 - fib
+        +
+     }
+  }
+
+5 fib`}
+      </textarea>
       <button
         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         onClick={() =>

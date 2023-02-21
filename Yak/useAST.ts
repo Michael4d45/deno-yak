@@ -1,5 +1,5 @@
 import { useEffect, useState } from "preact/hooks";
-import { Block, Token } from "./types.ts";
+import { Block, NodeType, Token } from "./types.ts";
 
 const getBlockAST = (tokens: Token[], pointer: number, block: Block) =>
   buildAST(getBlock(tokens, pointer), {
@@ -11,11 +11,17 @@ const getBlockAST = (tokens: Token[], pointer: number, block: Block) =>
   });
 
 const getBlock = (tokens: Token[], pointer: number) => {
-  if (tokens[pointer + 1] === undefined) {
-    throw (new Error("Unexpected termination"));
+  if (
+    tokens[pointer + 1] === undefined
+  ) {
+    tokens[pointer].errors.push("Expected block");
+    throw new Error("Syntax error");
   }
-  if (tokens[pointer + 1].type !== "LEFT_BRACKET") {
-    throw (new Error("Expected '{'"));
+  if (
+    tokens[pointer + 1].type !== "LEFT_BRACKET"
+  ) {
+    tokens[pointer + 1].errors.push("Expected '{'");
+    throw new Error("Syntax error");
   }
   let rightPointer = pointer + 1;
   let depth = 1;
@@ -27,10 +33,9 @@ const getBlock = (tokens: Token[], pointer: number) => {
     if (curToken.type === "LEFT_BRACKET") {
       depth++;
     }
-    console.log({ curToken, rightPointer, depth });
   }
   if (rightPointer >= tokens.length) {
-    throw (new Error("Expected '}'"));
+    tokens[tokens.length - 1].errors.push("Expected '}'");
   }
 
   const newTokens = tokens.splice(pointer + 2, rightPointer - pointer - 2);
@@ -38,57 +43,71 @@ const getBlock = (tokens: Token[], pointer: number) => {
   return newTokens;
 };
 
+const parseToken = (
+  block: Block,
+  tokens: Token[],
+  pointer: number,
+) => {
+  const token = tokens[pointer];
+
+  const pushNode = (node: NodeType) => {
+    block.scope.nodes.push({
+      ...node,
+      lineNumber: token.lineNumber,
+    });
+  };
+
+  switch (token.type) {
+    case "FUNCTION_NAME":
+      pushNode({
+        type: "FUNCTION_CALL",
+        name: token.value,
+      });
+      break;
+    case "IDENTIFIER":
+      block.scope.functions[token.name] = {
+        type: "FUNCTION_DEF",
+        name: token.name,
+        arity: token.arity,
+        block: getBlockAST(tokens, pointer, block),
+      };
+      break;
+    case "NUMBER":
+      pushNode({
+        type: "NUMBER",
+        value: token.value,
+      });
+      break;
+    case "BINARY_OPERATOR":
+      pushNode({
+        type: "BINARY_OPERATOR",
+        value: token.value,
+      });
+      break;
+    case "UNARY_OPERATOR":
+      pushNode({
+        type: "UNARY_OPERATOR",
+        value: token.value,
+      });
+      break;
+    case "CONDITIONAL":
+      pushNode({
+        type: "CONDITIONAL",
+        value: token.value,
+        block: getBlockAST(tokens, pointer, block),
+      });
+      break;
+    default:
+      token.errors.push(`Unexpected token`);
+      break;
+  }
+};
+
 const buildAST = (tokens: Token[], block: Block) => {
   if (tokens.length === 0) return block;
-  console.log({ tokens, block });
+
   for (let pointer = 0; pointer < tokens.length; pointer++) {
-    const curToken = tokens[pointer];
-    console.log({ pointer, curToken });
-    switch (curToken.type) {
-      case "FUNCTION_NAME":
-        block.scope.nodes.push({
-          type: "FUNCTION_CALL",
-          name: curToken.value,
-        });
-        break;
-      case "IDENTIFIER":
-        block.scope.functions[curToken.name] = {
-          type: "FUNCTION_DEF",
-          name: curToken.name,
-          arity: curToken.arity,
-          block: getBlockAST(tokens, pointer, block),
-        };
-        break;
-      case "LEFT_BRACKET":
-        throw (new Error(`Unexpected '{'`));
-      case "RIGHT_BRACKET":
-        throw (new Error(`Unexpected '}'`));
-      case "NUMBER":
-        block.scope.nodes.push({
-          type: "NUMBER",
-          value: curToken.value,
-        });
-        break;
-      case "BINARY_OPERATOR":
-        block.scope.nodes.push({
-          type: "BINARY_OPERATOR",
-          value: curToken.value,
-        });
-        break;
-      case "UNARY_OPERATOR":
-        block.scope.nodes.push({
-          type: "UNARY_OPERATOR",
-          value: curToken.value,
-        });
-        break;
-      case "CONDITIONAL":
-        block.scope.nodes.push({
-          type: "CONDITIONAL",
-          value: curToken.value,
-          block: getBlockAST(tokens, pointer, block),
-        });
-        break;
-    }
+    parseToken(block, tokens, pointer);
   }
 
   return block;
@@ -109,11 +128,6 @@ const getRootBlock = () => ({
 const useAST = ({ tokens }: Props) => {
   const [cachedTokens, setCachedTokens] = useState("");
   const [block, setBlock] = useState<Block>(getRootBlock());
-  const [astError, setError] = useState("");
-
-  useEffect(() => {
-    console.log("INIT");
-  }, []);
 
   useEffect(() => {
     const stringedTokens = JSON.stringify(tokens);
@@ -121,19 +135,10 @@ const useAST = ({ tokens }: Props) => {
 
     setCachedTokens(stringedTokens);
 
-    try {
-      setBlock(buildAST([...tokens], getRootBlock()));
-      setError("");
-    } catch ({ message }) {
-      setError(message);
-      setBlock(getRootBlock());
-    }
+    setBlock(buildAST([...tokens], getRootBlock()));
   }, [tokens]);
 
-  return {
-    block,
-    astError,
-  };
+  return block;
 };
 
 export default useAST;

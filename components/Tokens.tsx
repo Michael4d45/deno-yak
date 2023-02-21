@@ -4,23 +4,37 @@ import StackToken from "./StackToken.tsx";
 
 interface Props {
   tokens: Token[];
+  tokenErrors: Token[];
   pos: number;
-  setPos: (pos: number) => void;
 }
 
-const Tokens: FunctionComponent<Props> = ({ tokens, pos, setPos }) => {
+const Tokens: FunctionComponent<Props> = ({
+  tokens,
+  tokenErrors,
+  pos,
+}) => {
   const numLength = `${tokens.length}`.length;
   return (
     <div class="w-full h-full flex flex-col">
-      <div>Tokens</div>
-      {tokens.map((token, n) => (
+      <div class="flex flex-row">
+        <div>Tokens</div>
+        {tokenErrors.length > 0 && (
+          <>
+            <div class="w-8"></div>
+            <div class="text-red-500">
+              {tokenErrors.length} Syntax Error(s). Lines: {"["}
+              {`${tokenErrors.map((token) => token.lineNumber)}`}
+              {"]"}
+            </div>
+          </>
+        )}
+      </div>
+      {tokens.map((token) => (
         <StackToken
-          key={n}
-          rank={n + 1}
-          active={pos === n + 1}
+          key={token.lineNumber}
+          active={pos === token.lineNumber}
           token={token}
           numLength={numLength}
-          setPos={setPos}
         />
       ))}
     </div>

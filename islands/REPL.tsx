@@ -1,5 +1,4 @@
 import { useEffect, useState } from "preact/hooks";
-import Error from "../components/Error.tsx";
 import Input from "../components/Input.tsx";
 import Tokens from "../components/Tokens.tsx";
 import tokenizer from "../Yak/Tokenizer.ts";
@@ -9,49 +8,28 @@ import useCompute from "../Yak/useCompute.ts";
 
 export default function REPL() {
   const [tokens, setTokens] = useState<Token[]>([]);
-  const [error, setError] = useState("");
+  const [tokenErrors, setTokenErrors] = useState<Token[]>([]);
   const [pos, setPos] = useState(1);
 
   const onSubmit = (value: string) => {
-    console.log({ value });
-    try {
-      const newTokens = tokenizer(value);
-      if (pos >= newTokens.length) {
-        setPos(newTokens.length);
-      }
-      setTokens(newTokens);
-      setError("");
-    } catch ({ message }) {
-      setTokens([]);
-      setError(message);
+    setTokens(tokenizer(value));
+  };
+
+  const block = useAST({ tokens });
+
+  const { setBlock, stack, step, run, calcError, running, reset, fast } = useCompute({
+    setPos,
+  });
+
+  useEffect(() => {
+    const newTokenErrors = tokens.filter((token) => token.errors.length > 0);
+
+    setTokenErrors(newTokenErrors);
+
+    if (newTokenErrors.length === 0) {
+      setBlock(block);
     }
-  };
-
-  const increment = () => {
-    setPos((oldPos) => {
-      if (oldPos >= tokens.length) return oldPos;
-      return oldPos + 1;
-    });
-  };
-
-  const decrement = () => {
-    setPos((oldPos) => {
-      if (oldPos <= 1) return 1;
-      return oldPos - 1;
-    });
-  };
-
-  const { block, astError } = useAST({ tokens });
-
-  const { stack } = useCompute({ block, pos });
-
-  useEffect(() => {
-    console.log(stack);
-  }, [stack]);
-
-  useEffect(() => {
-    console.log({ block, astError });
-  }, [block, astError]);
+  }, [tokens, block]);
 
   return (
     <div class="flex flex-row w-screen h-screen font-mono">
@@ -60,23 +38,36 @@ export default function REPL() {
       </div>
       <div class="w-1/3 bg-gray-200 whitespace-pre h-full flex flex-col">
         <div class="flex-grow overflow-y-scroll">
-          {tokens.length > 0 && (
-            <Tokens tokens={tokens} pos={pos} setPos={setPos} />
-          )}
-          {error && <Error error={error} />}
+          <Tokens
+            tokens={tokens}
+            tokenErrors={tokenErrors}
+            pos={pos}
+          />
         </div>
         <div class="w-full flex flex-row">
           <button
             class="flex-grow border border-2 border-gray-300 rounded-lg"
-            onClick={decrement}
+            onClick={step}
           >
-            Back
+            Step
           </button>
           <button
             class="flex-grow border border-2 border-gray-300 rounded-lg"
-            onClick={increment}
+            onClick={run}
           >
-            Step
+            {running === null ? <>Run</> : <>Stop</>}
+          </button>
+          <button
+            class="flex-grow border border-2 border-gray-300 rounded-lg"
+            onClick={fast}
+          >
+            {running === null ? <>Fast</> : <>Stop</>}
+          </button>
+          <button
+            class="flex-grow border border-2 border-gray-300 rounded-lg"
+            onClick={reset}
+          >
+            Reset
           </button>
         </div>
       </div>

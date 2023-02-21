@@ -3,21 +3,17 @@ import {
   BinaryOperator,
   Block,
   ConditionalNode,
+  ExpressionNode,
   FunctionDefNode,
-  Statement,
   UnaryOperator,
 } from "./types.ts";
-
-interface Props {
-  block: Block;
-}
 
 type Stack = number[];
 
 const testArgLength = (expect: number, stack: Stack) => {
   if (stack.length < expect) {
     throw new Error(
-      `Unary operator expected ${expect} argument(s), got ${stack.length}`,
+      `Expected ${expect} argument(s), got ${stack.length}`,
     );
   }
 };
@@ -30,17 +26,52 @@ const calculateBinaryOp = (
 
   const first = stack.pop() as number;
   const second = stack.pop() as number;
-  switch (op) {
-    case "+":
-      return first + second;
-    case "-":
-      return first - second;
-    case "*":
-      return first * second;
-    case "%":
-      return first % second;
-    case "==":
-      return first === second ? 1 : 0;
+
+  if (op === "+") {
+    return stack.push(first + second);
+  }
+
+  if (op === "-") {
+    return stack.push(second - first);
+  }
+
+  if (op === "*") {
+    return stack.push(first * second);
+  }
+
+  if (op === "%") {
+    return stack.push(first % second);
+  }
+
+  if (op === "==") {
+    return stack.push(first === second ? 1 : 0);
+  }
+
+  if (op === "|") {
+    return stack.push(first === 1 || second === 1 ? 1 : 0);
+  }
+
+  if (op === "&") {
+    return stack.push(first === 1 && second === 1 ? 1 : 0);
+  }
+
+  if (op === "^") {
+    return stack.push(
+      (first === 1 || second === 1) && first !== second ? 1 : 0,
+    );
+  }
+
+  if (op === "<->") {
+    return stack.push(first, second);
+  }
+
+  if (op === "<^>") {
+    return stack.push(first, second, first);
+  }
+
+  if (op === "<<<") {
+    const third = stack.pop() as number;
+    return stack.push(first, third, second);
   }
 };
 
@@ -50,10 +81,12 @@ const calculateUnaryOp = (
 ) => {
   testArgLength(1, stack);
 
-  const arg = stack[stack.length - 1];
-  switch (op) {
-    case ".":
-      return arg;
+  if (op === ".") {
+    return stack.push(stack[stack.length - 1]);
+  }
+
+  if (op === "@") {
+    return stack.pop();
   }
 };
 
@@ -71,7 +104,7 @@ const calculateConditional = (
   const isFalsy = op === "?" ? arg === 0 : arg !== 0;
 
   if (!isFalsy) {
-    compute(node.block, stack);
+    runner.pushCompute(compute(node.block));
   }
 };
 
@@ -98,13 +131,13 @@ const calculateFunctionCall = (
 
   testArgLength(func.arity, stack);
 
-  compute(func.block, stack);
+  runner.pushCompute(compute(func.block));
 };
 
-const computeNode = (block: Block, node: Statement, stack: Stack) => {
+const computeNode = (block: Block, node: ExpressionNode, stack: Stack) => {
   switch (node.type) {
     case "NUMBER":
-      return node.value;
+      return stack.push(node.value);
     case "BINARY_OPERATOR":
       return calculateBinaryOp(node.value, stack);
     case "UNARY_OPERATOR":
@@ -113,29 +146,164 @@ const computeNode = (block: Block, node: Statement, stack: Stack) => {
       return calculateConditional(node, stack);
     case "FUNCTION_CALL":
       return calculateFunctionCall(block, node.name, stack);
-    case "FUNCTION_DEF":
-      throw new Error("Unexpected Function Def");
   }
 };
 
-const compute = (block: Block, stack: Stack) => {
-  console.log(`${stack}`);
-  block.scope.nodes.forEach((node) => {
-    const res = computeNode(block, node, stack);
-    if (res !== undefined) stack.push(res);
-  });
-  return stack;
-};
+const compute = (block: Block) => {
+  let i = 0;
 
-const useCompute = ({ block }: Props) => {
-  const [stack, setStack] = useState<Stack>([]);
-
-  useEffect(() => {
-    setStack(compute(block, []));
-  }, [block]);
+  const computeLine = (stack: Stack) => {
+    const node = block.scope.nodes[i];
+    computeNode(block, node, stack);
+    i++;
+    return node;
+  };
 
   return {
+    computeLine,
+    finished: () => i >= block.scope.nodes.length,
+  };
+};
+
+type ComputeType = ReturnType<typeof compute>;
+type StepType = { node: ExpressionNode; stack: Stack } | undefined;
+
+const Runner = () => {
+  let computeStack: ComputeType[] = [];
+  let stack: Stack = [];
+
+  const reset = () => {
+    computeStack = [];
+    stack = [];
+  };
+
+  const step = (): StepType => {
+    if (computeStack.length === 0) return;
+
+    const { computeLine, finished } = computeStack[computeStack.length - 1];
+
+    if (finished()) {
+      computeStack.pop();
+      return step();
+    }
+
+    const node = computeLine(stack);
+
+    return {
+      node,
+      stack: [...stack],
+    };
+  };
+
+  return {
+    pushCompute: (comp: ComputeType) => computeStack.push(comp),
+    reset,
+    step,
+  };
+};
+
+const runner = Runner();
+
+interface Props {
+  setPos: (pos: number) => void;
+}
+
+const useCompute = ({ setPos }: Props) => {
+  const [block, setBlock] = useState<Block | null>(null);
+  const [stack, setStack] = useState<Stack>([]);
+  const [calcError, setCalcError] = useState("");
+  const [running, setRunning] = useState<number | null>(null);
+
+  const reset = () => {
+    clearRunning();
+    setPos(0);
+
+    runner.reset();
+
+    setStack([]);
+
+    if (!block) return;
+    runner.pushCompute(compute(block));
+  };
+
+  const clearRunning = () => {
+    if (running !== null) {
+      clearInterval(running);
+    }
+    setRunning(null);
+  };
+
+  const step = () => {
+    try {
+      const stepped = runner.step();
+      if (!stepped) {
+        clearRunning();
+        return false;
+      }
+
+      setStack(stepped.stack);
+      setPos(stepped.node.lineNumber);
+    } catch ({ message }) {
+      setCalcError(message);
+      return false;
+    }
+    return true;
+  };
+
+  const run = () => {
+    if (running !== null) clearRunning();
+    else {
+      step();
+      const i = setInterval(() => {
+        if (!step()) clearInterval(i);
+      }, 100);
+      setRunning(i);
+    }
+  };
+
+  const fast = () => {
+    if (running !== null) clearRunning();
+    else {
+      setRunning(-1);
+    }
+  };
+
+  useEffect(() => {
+    if (running === -1) {
+      let stepped: StepType = undefined;
+      while (true) {
+        const tempStepped = runner.step();
+
+        if (!tempStepped) break;
+
+        stepped = tempStepped;
+      }
+      if (stepped) {
+        setStack(stepped.stack);
+        setPos(stepped.node.lineNumber);
+      }
+      clearRunning();
+    }
+  }, [running]);
+
+  useEffect(() => {
+    reset();
+  }, [block]);
+
+  useEffect(() => {
+    if (!calcError) return;
+    console.error(calcError);
+  }, [calcError]);
+
+  return {
+    setBlock,
     stack,
+    step,
+    run,
+    running,
+    calcError,
+    reset,
+    fast,
   };
 };
 
