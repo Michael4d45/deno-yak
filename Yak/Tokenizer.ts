@@ -36,9 +36,14 @@ const tokenizer = (input: string): Token[] => {
     if (
       token === "+" || token === "-" || token === "*" || token === "%" ||
       token === "==" || token === "|" || token === "&" || token === "^" ||
-      token === "<->" || token === "<^>" || token === "<<<"
+      token === "<->" || token === "<^>"
     ) {
       pushToken({ type: "BINARY_OPERATOR", value: token });
+      continue;
+    }
+
+    if (token === "<<<") {
+      pushToken({ type: "TERNARY_OPERATOR", value: token });
       continue;
     }
 
@@ -80,7 +85,7 @@ const tokenizer = (input: string): Token[] => {
     }
 
     if (functionNameReg.test(token)) {
-      pushToken({ type: "FUNCTION_NAME", value: token });
+      pushToken({ type: "FUNCTION_CALL", value: token });
       continue;
     }
 

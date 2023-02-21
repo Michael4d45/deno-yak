@@ -1,3 +1,4 @@
+export type TernaryOperator = "<<<"; // rot
 export type BinaryOperator =
   | "+"
   | "-"
@@ -9,7 +10,6 @@ export type BinaryOperator =
   | "^"
   | "<->" // swap
   | "<^>" // over
-  | "<<<"; // rot
 export type UnaryOperator = "." | "@";
 export type Conditional = "?" | "!";
 
@@ -18,11 +18,16 @@ interface NumberToken {
   value: number;
 }
 
-type OperatorToken = BinaryOperatorToken | UnaryOperatorToken;
+type OperatorToken = BinaryOperatorToken | UnaryOperatorToken | TernaryOperatorToken;
 
 interface BinaryOperatorToken {
   type: "BINARY_OPERATOR";
   value: BinaryOperator;
+}
+
+interface TernaryOperatorToken {
+  type: "TERNARY_OPERATOR";
+  value: TernaryOperator;
 }
 
 interface UnaryOperatorToken {
@@ -53,7 +58,7 @@ interface ConditionalToken {
 }
 
 interface FunctionToken {
-  type: "FUNCTION_NAME";
+  type: "FUNCTION_CALL";
   value: string;
 }
 
@@ -134,7 +139,7 @@ export interface FunctionDefNode {
 
 interface FunctionCallNode {
   type: "FUNCTION_CALL";
-  name: string;
+  value: string;
 }
 
 export interface ConditionalNode {
@@ -148,7 +153,12 @@ interface NumberNode {
   value: number;
 }
 
-type OperatorNode = BinaryOperatorNode | UnaryOperatorNode;
+type OperatorNode = BinaryOperatorNode | UnaryOperatorNode | TernaryOperatorNode;
+
+interface TernaryOperatorNode {
+  type: "TERNARY_OPERATOR";
+  value: TernaryOperator;
+}
 
 interface BinaryOperatorNode {
   type: "BINARY_OPERATOR";

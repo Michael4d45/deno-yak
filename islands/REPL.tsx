@@ -17,9 +17,10 @@ export default function REPL() {
 
   const block = useAST({ tokens });
 
-  const { setBlock, stack, step, run, calcError, running, reset, fast } = useCompute({
-    setPos,
-  });
+  const { setBlock, stack, step, run, calcError, running, reset, fast } =
+    useCompute({
+      setPos,
+    });
 
   useEffect(() => {
     const newTokenErrors = tokens.filter((token) => token.errors.length > 0);
@@ -38,11 +39,7 @@ export default function REPL() {
       </div>
       <div class="w-1/3 bg-gray-200 whitespace-pre h-full flex flex-col">
         <div class="flex-grow overflow-y-scroll">
-          <Tokens
-            tokens={tokens}
-            tokenErrors={tokenErrors}
-            pos={pos}
-          />
+          <Tokens tokens={tokens} tokenErrors={tokenErrors} pos={pos} />
         </div>
         <div class="w-full flex flex-row">
           <button
@@ -73,9 +70,12 @@ export default function REPL() {
       </div>
       <div class="w-1/3 bg-gray-300 flex flex-col">
         <div>Stack</div>
-        {stack.reverse().map((num, i) => (
-          <div key={i}>{num}</div>
-        ))}
+        {calcError && <div class="text-red-500">{calcError}</div>}
+        <div class="overflow-y-scroll">
+          {stack.reverse().map((num, i) => (
+            <div key={i}>{num}</div>
+          ))}
+        </div>
       </div>
     </div>
   );

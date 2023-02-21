@@ -5,15 +5,16 @@ import {
   ConditionalNode,
   ExpressionNode,
   FunctionDefNode,
+  TernaryOperator,
   UnaryOperator,
 } from "./types.ts";
 
 type Stack = number[];
 
-const testArgLength = (expect: number, stack: Stack) => {
+const testArgLength = (expect: number, stack: Stack, name: string) => {
   if (stack.length < expect) {
     throw new Error(
-      `Expected ${expect} argument(s), got ${stack.length}`,
+      `Expected ${expect} argument(s) for '${name}', got ${stack.length}`,
     );
   }
 };
@@ -22,7 +23,7 @@ const calculateBinaryOp = (
   op: BinaryOperator,
   stack: Stack,
 ) => {
-  testArgLength(2, stack);
+  testArgLength(2, stack, op);
 
   const first = stack.pop() as number;
   const second = stack.pop() as number;
@@ -68,9 +69,19 @@ const calculateBinaryOp = (
   if (op === "<^>") {
     return stack.push(first, second, first);
   }
+};
+
+const calculateTernaryOp = (
+  op: TernaryOperator,
+  stack: Stack,
+) => {
+  testArgLength(3, stack, op);
+
+  const first = stack.pop() as number;
+  const second = stack.pop() as number;
+  const third = stack.pop() as number;
 
   if (op === "<<<") {
-    const third = stack.pop() as number;
     return stack.push(first, third, second);
   }
 };
@@ -79,7 +90,7 @@ const calculateUnaryOp = (
   op: UnaryOperator,
   stack: Stack,
 ) => {
-  testArgLength(1, stack);
+  testArgLength(1, stack, op);
 
   if (op === ".") {
     return stack.push(stack[stack.length - 1]);
@@ -94,7 +105,7 @@ const calculateConditional = (
   node: ConditionalNode,
   stack: Stack,
 ) => {
-  testArgLength(1, stack);
+  testArgLength(1, stack, node.value);
   const op = node.value;
 
   const arg = stack.pop() as number;
@@ -129,7 +140,7 @@ const calculateFunctionCall = (
     throw new Error(`Function '${name}' not defined`);
   }
 
-  testArgLength(func.arity, stack);
+  testArgLength(func.arity, stack, name);
 
   runner.pushCompute(compute(func.block));
 };
@@ -138,6 +149,8 @@ const computeNode = (block: Block, node: ExpressionNode, stack: Stack) => {
   switch (node.type) {
     case "NUMBER":
       return stack.push(node.value);
+    case "TERNARY_OPERATOR":
+      return calculateTernaryOp(node.value, stack);
     case "BINARY_OPERATOR":
       return calculateBinaryOp(node.value, stack);
     case "UNARY_OPERATOR":
@@ -145,7 +158,7 @@ const computeNode = (block: Block, node: ExpressionNode, stack: Stack) => {
     case "CONDITIONAL":
       return calculateConditional(node, stack);
     case "FUNCTION_CALL":
-      return calculateFunctionCall(block, node.name, stack);
+      return calculateFunctionCall(block, node.value, stack);
   }
 };
 
@@ -221,6 +234,7 @@ const useCompute = ({ setPos }: Props) => {
     runner.reset();
 
     setStack([]);
+    setCalcError("");
 
     if (!block) return;
     runner.pushCompute(compute(block));
@@ -289,11 +303,6 @@ const useCompute = ({ setPos }: Props) => {
   useEffect(() => {
     reset();
   }, [block]);
-
-  useEffect(() => {
-    if (!calcError) return;
-    console.error(calcError);
-  }, [calcError]);
 
   return {
     setBlock,

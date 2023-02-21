@@ -1,5 +1,12 @@
 import { useEffect, useState } from "preact/hooks";
-import { Block, NodeType, Token } from "./types.ts";
+import {
+  Block,
+  ConditionalNode,
+  ExpressionNode,
+  FunctionDefNode,
+  NodeType,
+  Token,
+} from "./types.ts";
 
 const getBlockAST = (tokens: Token[], pointer: number, block: Block) =>
   buildAST(getBlock(tokens, pointer), {
@@ -50,57 +57,37 @@ const parseToken = (
 ) => {
   const token = tokens[pointer];
 
-  const pushNode = (node: NodeType) => {
+  const pushNode = (node?: NodeType) => {
     block.scope.nodes.push({
-      ...node,
-      lineNumber: token.lineNumber,
+      ...(token as ExpressionNode),
+      ...(node ? node : {}),
     });
   };
 
-  switch (token.type) {
-    case "FUNCTION_NAME":
-      pushNode({
-        type: "FUNCTION_CALL",
-        name: token.value,
-      });
-      break;
-    case "IDENTIFIER":
-      block.scope.functions[token.name] = {
-        type: "FUNCTION_DEF",
-        name: token.name,
-        arity: token.arity,
-        block: getBlockAST(tokens, pointer, block),
-      };
-      break;
-    case "NUMBER":
-      pushNode({
-        type: "NUMBER",
-        value: token.value,
-      });
-      break;
-    case "BINARY_OPERATOR":
-      pushNode({
-        type: "BINARY_OPERATOR",
-        value: token.value,
-      });
-      break;
-    case "UNARY_OPERATOR":
-      pushNode({
-        type: "UNARY_OPERATOR",
-        value: token.value,
-      });
-      break;
-    case "CONDITIONAL":
-      pushNode({
-        type: "CONDITIONAL",
-        value: token.value,
-        block: getBlockAST(tokens, pointer, block),
-      });
-      break;
-    default:
-      token.errors.push(`Unexpected token`);
-      break;
+  if (token.type === "IDENTIFIER") {
+    block.scope.functions[token.name] = {
+      type: "FUNCTION_DEF",
+      block: getBlockAST(tokens, pointer, block),
+    } as FunctionDefNode;
+    return;
   }
+
+  if (token.type === "CONDITIONAL") {
+    return pushNode({
+      block: getBlockAST(tokens, pointer, block),
+    } as ConditionalNode);
+  }
+
+  if (
+    token.type === "FUNCTION_CALL" ||
+    token.type === "NUMBER" ||
+    token.type === "BINARY_OPERATOR" ||
+    token.type === "UNARY_OPERATOR" ||
+    token.type === "TERNARY_OPERATOR"
+  ) {
+    return pushNode();
+  }
+  token.errors.push(`Unexpected token`);
 };
 
 const buildAST = (tokens: Token[], block: Block) => {
