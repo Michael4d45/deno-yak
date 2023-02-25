@@ -1,10 +1,10 @@
 import { useEffect, useState } from "preact/hooks";
 import Input from "../components/Input.tsx";
 import Tokens from "../components/Tokens.tsx";
+import useCompute from "../Yak/Compute/useCompute.ts";
 import tokenizer from "../Yak/Tokenizer.ts";
-import { Token } from "../Yak/types.ts";
+import { Token } from "../Yak/types.d.ts";
 import useAST from "../Yak/useAST.ts";
-import useCompute from "../Yak/useCompute.ts";
 
 export default function REPL() {
   const [tokens, setTokens] = useState<Token[]>([]);

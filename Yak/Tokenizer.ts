@@ -1,4 +1,4 @@
-import { Token, TokenType } from "./types.ts";
+import { Token, TokenType } from "./types.d.ts";
 
 const functionNameReg = /^[A-Za-z][A-Za-z_]*$/;
 

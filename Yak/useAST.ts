@@ -6,7 +6,7 @@ import {
   FunctionDefNode,
   NodeType,
   Token,
-} from "./types.ts";
+} from "./types.d.ts";
 
 const getBlockAST = (tokens: Token[], pointer: number, block: Block) =>
   buildAST(getBlock(tokens, pointer), {
