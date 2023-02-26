@@ -1,6 +1,6 @@
-import { Block } from "../types.d.ts";
-import computeNode from "./Node/index.ts";
-import { PushComputeType, Stack, StepType } from "./types.d.ts";
+import { Block } from "../types.ts";
+import computeNode from "./Nodes/index.ts";
+import { PushComputeType, Stack, StepType } from "./types.ts";
 
 const Runner = () => {
   type ComputeType = ReturnType<typeof compute>;

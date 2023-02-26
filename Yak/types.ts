@@ -1,24 +1,44 @@
-export type TernaryOperator = "<<<"; // rot
-export type BinaryOperator =
-  | "+"
-  | "-"
-  | "*"
-  | "%"
-  | "=="
-  | "|"
-  | "&"
-  | "^"
-  | "<->" // swap
-  | "<^>" // over
-export type UnaryOperator = "." | "@";
-export type Conditional = "?" | "!";
+export const binaryOperators = [
+  "+",
+  "-",
+  "*",
+  "%",
+  "==",
+  "|",
+  "&",
+  "^",
+  "<->",
+  "<^>",
+] as const;
+
+export const unaryOperators = [
+  ".",
+  "@",
+] as const;
+
+export const ternaryOperators = [
+  "<<<",
+] as const;
+
+export const conditionalOperators = [
+  "?",
+  "!",
+] as const;
+
+export type TernaryOperator = typeof ternaryOperators[number];
+export type BinaryOperator = typeof binaryOperators[number];
+export type UnaryOperator = typeof unaryOperators[number];
+export type Conditional = typeof conditionalOperators[number];
 
 interface NumberToken {
   type: "NUMBER";
   value: number;
 }
 
-type OperatorToken = BinaryOperatorToken | UnaryOperatorToken | TernaryOperatorToken;
+type OperatorToken =
+  | BinaryOperatorToken
+  | UnaryOperatorToken
+  | TernaryOperatorToken;
 
 interface BinaryOperatorToken {
   type: "BINARY_OPERATOR";
@@ -35,9 +55,11 @@ interface UnaryOperatorToken {
   value: UnaryOperator;
 }
 
+export type FunctionIdentifier = `${number}#${string}`;
+
 interface IdentifierToken {
   type: "IDENTIFIER";
-  value: string;
+  value: FunctionIdentifier;
   arity: number;
   name: string;
 }
@@ -153,7 +175,10 @@ interface NumberNode {
   value: number;
 }
 
-type OperatorNode = BinaryOperatorNode | UnaryOperatorNode | TernaryOperatorNode;
+type OperatorNode =
+  | BinaryOperatorNode
+  | UnaryOperatorNode
+  | TernaryOperatorNode;
 
 interface TernaryOperatorNode {
   type: "TERNARY_OPERATOR";

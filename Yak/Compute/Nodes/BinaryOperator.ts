@@ -1,5 +1,5 @@
-import { BinaryOperator } from "../../types.d.ts";
-import { Stack } from "../types.d.ts";
+import { BinaryOperator } from "../../types.ts";
+import { Stack } from "../types.ts";
 import { testArgLength } from "./Verification.ts";
 
 const calculateBinaryOp = (

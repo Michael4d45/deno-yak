@@ -1,5 +1,5 @@
-import { TernaryOperator } from "../../types.d.ts";
-import { Stack } from "./../types.d.ts";
+import { TernaryOperator } from "../../types.ts";
+import { Stack } from "./../types.ts";
 import { testArgLength } from "./Verification.ts";
 
 const calculateTernaryOp = (

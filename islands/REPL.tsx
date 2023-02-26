@@ -2,8 +2,8 @@ import { useEffect, useState } from "preact/hooks";
 import Input from "../components/Input.tsx";
 import Tokens from "../components/Tokens.tsx";
 import useCompute from "../Yak/Compute/useCompute.ts";
-import tokenizer from "../Yak/Tokenizer.ts";
-import { Token } from "../Yak/types.d.ts";
+import tokenizer from "../Yak/Tokenizer/index.ts";
+import { Token } from "../Yak/types.ts";
 import useAST from "../Yak/useAST.ts";
 
 export default function REPL() {

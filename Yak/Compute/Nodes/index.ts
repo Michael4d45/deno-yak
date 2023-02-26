@@ -1,5 +1,5 @@
-import { Block, ExpressionNode } from "../../types.d.ts";
-import { PushComputeType, Stack } from "../types.d.ts";
+import { Block, ExpressionNode } from "../../types.ts";
+import { PushComputeType, Stack } from "../types.ts";
 import calculateBinaryOp from "./BinaryOperator.ts";
 import calculateConditional from "./Conditional.ts";
 import calculateFunctionCall from "./FunctionCall.ts";
