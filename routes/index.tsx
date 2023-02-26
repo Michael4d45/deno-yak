@@ -1,5 +1,5 @@
 import { Head } from "$fresh/runtime.ts";
-import REPL from "../islands/REPL.tsx";
+import PlayGround from "../islands/PlayGround.tsx";
 
 export default function Home() {
   return (
@@ -7,7 +7,7 @@ export default function Home() {
       <Head>
         <title>Yak</title>
       </Head>
-      <REPL />
+      <PlayGround />
     </>
   );
 }

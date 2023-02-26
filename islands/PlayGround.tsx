@@ -6,7 +6,7 @@ import tokenizer from "../Yak/Tokenizer/index.ts";
 import { Token } from "../Yak/types.ts";
 import useAST from "../Yak/useAST.ts";
 
-export default function REPL() {
+const PlayGround = () => {
   const [tokens, setTokens] = useState<Token[]>([]);
   const [tokenErrors, setTokenErrors] = useState<Token[]>([]);
   const [pos, setPos] = useState(1);
@@ -79,4 +79,6 @@ export default function REPL() {
       </div>
     </div>
   );
-}
+};
+
+export default PlayGround;
