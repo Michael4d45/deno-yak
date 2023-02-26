@@ -4,7 +4,8 @@ import Tokens from "../components/Tokens.tsx";
 import useCompute from "../Yak/Compute/useCompute.ts";
 import tokenizer from "../Yak/Tokenizer/index.ts";
 import { Token } from "../Yak/types.ts";
-import useAST from "../Yak/useAST.ts";
+import useAST from "../Yak/AST/useAST.ts";
+import { Variable } from "../Yak/Compute/types.ts";
 
 const PlayGround = () => {
   const [tokens, setTokens] = useState<Token[]>([]);
@@ -17,10 +18,19 @@ const PlayGround = () => {
 
   const block = useAST({ tokens });
 
-  const { setBlock, stack, step, run, calcError, running, reset, fast } =
-    useCompute({
-      setPos,
-    });
+  const {
+    setBlock,
+    stack,
+    step,
+    run,
+    calcError,
+    running,
+    reset,
+    fast,
+    variables,
+  } = useCompute({
+    setPos,
+  });
 
   useEffect(() => {
     const newTokenErrors = tokens.filter((token) => token.errors.length > 0);
@@ -68,14 +78,26 @@ const PlayGround = () => {
           </button>
         </div>
       </div>
-      <div class="w-1/3 bg-gray-300 flex flex-col">
-        <div>Stack</div>
-        {calcError && <div class="text-red-500">{calcError}</div>}
-        <div class="overflow-y-scroll">
-          {stack.reverse().map((num, i) => (
-            <div key={i}>{num}</div>
-          ))}
+      <div class="w-1/3 bg-gray-300 flex flex-row space-x-2">
+        <div class="flex flex-col">
+          <div>Stack</div>
+          {calcError && <div class="text-red-500">{calcError}</div>}
+          <div class="overflow-y-scroll">
+            {[...stack].reverse().map((num, i) => (
+              <div key={i}>{num}</div>
+            ))}
+          </div>
         </div>
+        {variables.map(({ name, stack }: Variable) => (
+          <div class="flex flex-col">
+            <div>{name}</div>
+            <div class="overflow-y-scroll">
+              {[...stack].reverse().map((num, i) => (
+                <div key={i}>{num}</div>
+              ))}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

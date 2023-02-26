@@ -1,7 +1,7 @@
 import { useEffect, useState } from "preact/hooks";
-import { Block } from "../types.ts";
+import { Block, Stack } from "../types.ts";
 import Runner from "./index.ts";
-import { RunnerType, Stack, StepType } from "./types.ts";
+import { RunnerType, StepType, Variables } from "./types.ts";
 
 interface Props {
   setPos: (pos: number) => void;
@@ -13,6 +13,7 @@ const useCompute = ({ setPos }: Props) => {
   const [runner] = useState<RunnerType>(Runner());
   const [calcError, setCalcError] = useState("");
   const [running, setRunning] = useState<number | null>(null);
+  const [variables, setVariables] = useState<Variables>([]);
 
   const reset = () => {
     clearRunning();
@@ -20,6 +21,7 @@ const useCompute = ({ setPos }: Props) => {
 
     setStack([]);
     setCalcError("");
+    setVariables([]);
 
     runner.reset();
 
@@ -43,6 +45,7 @@ const useCompute = ({ setPos }: Props) => {
       }
 
       setStack(stepped.stack);
+      setVariables(runner.getVariables());
       setPos(stepped.node.lineNumber);
     } catch ({ message }) {
       setCalcError(message);
@@ -81,6 +84,7 @@ const useCompute = ({ setPos }: Props) => {
       }
       if (stepped) {
         setStack(stepped.stack);
+        setVariables(runner.getVariables());
         setPos(stepped.node.lineNumber);
       }
       clearRunning();
@@ -100,6 +104,7 @@ const useCompute = ({ setPos }: Props) => {
     calcError,
     reset,
     fast,
+    variables,
   };
 };
 

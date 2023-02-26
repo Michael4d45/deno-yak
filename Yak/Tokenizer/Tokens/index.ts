@@ -9,6 +9,7 @@ import testRightBracket from "./RightBracket.ts";
 import testTernaryOperator from "./TernaryOperator.ts";
 import testUnaryOperator from "./UnaryOperator.ts";
 import unknown from "./Unknown.ts";
+import testVariable from "./Variable.ts";
 
 const tests: TestType[] = [
   testNumber,
@@ -20,6 +21,7 @@ const tests: TestType[] = [
   testRightBracket,
   testIdentifier,
   testFunctionCall,
+  testVariable,
   unknown,
 ];
 

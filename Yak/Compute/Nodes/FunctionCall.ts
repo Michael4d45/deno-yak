@@ -1,5 +1,5 @@
-import { Block, FunctionDefNode } from "../../types.ts";
-import { PushComputeType, Stack } from "./../types.ts";
+import { Block, FunctionDefNode, Stack } from "../../types.ts";
+import { PushComputeType } from "./../types.ts";
 import { testArgLength } from "./Verification.ts";
 
 const getFunction = (name: string, block: Block): FunctionDefNode | null => {

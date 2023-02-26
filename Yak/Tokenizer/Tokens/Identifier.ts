@@ -1,5 +1,5 @@
-import { FunctionIdentifier } from "../../types.ts";
-import { functionNameReg, PushTokenType, TestType } from "../types.ts";
+import { FunctionIdentifier, nameReg } from "../../types.ts";
+import { PushTokenType, TestType } from "../types.ts";
 
 const testIdentifier: TestType = (
   token: string,
@@ -13,9 +13,9 @@ const testIdentifier: TestType = (
     if (isNaN(Number(arity))) {
       error += `Expected Number: ${arity}`;
     }
-    if (!functionNameReg.test(name)) {
+    if (!nameReg.test(name)) {
       if (error) error += "\n";
-      error += `Expected function name ${functionNameReg}: ${name}`;
+      error += `Expected function name ${nameReg}: ${name}`;
     }
 
     pushToken({

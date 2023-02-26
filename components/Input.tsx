@@ -23,15 +23,22 @@ const Input: FunctionComponent<Props> = ({ onSubmit }) => {
       <textarea class="w-full h-full">
         {`1#fib
   {
+    . 1->MY_VAR
      . . 1 == <-> 0 == | !
      {
         . 1 - fib
         <-> 2 - fib
+        . 1->test
         +
      }
   }
 
-5 fib`}
+->MY_VAR
+
+5 fib
+
+
+<-MY_VAR`}
       </textarea>
       <button
         class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"

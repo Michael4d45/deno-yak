@@ -1,4 +1,3 @@
-import { useEffect, useState } from "preact/hooks";
 import {
   Block,
   ConditionalNode,
@@ -6,7 +5,7 @@ import {
   FunctionDefNode,
   NodeType,
   Token,
-} from "./types.ts";
+} from "../types.ts";
 
 const getBlockAST = (tokens: Token[], pointer: number, block: Block) =>
   buildAST(getBlock(tokens, pointer), {
@@ -14,6 +13,7 @@ const getBlockAST = (tokens: Token[], pointer: number, block: Block) =>
     scope: {
       nodes: [],
       functions: {},
+      variables: {},
     },
   });
 
@@ -80,6 +80,7 @@ const parseToken = (
 
   if (
     token.type === "FUNCTION_CALL" ||
+    token.type === "VARIABLE" ||
     token.type === "NUMBER" ||
     token.type === "BINARY_OPERATOR" ||
     token.type === "UNARY_OPERATOR" ||
@@ -100,32 +101,4 @@ const buildAST = (tokens: Token[], block: Block) => {
   return block;
 };
 
-interface Props {
-  tokens: Token[];
-}
-
-const getRootBlock = () => ({
-  parent: null,
-  scope: {
-    nodes: [],
-    functions: {},
-  },
-});
-
-const useAST = ({ tokens }: Props) => {
-  const [cachedTokens, setCachedTokens] = useState("");
-  const [block, setBlock] = useState<Block>(getRootBlock());
-
-  useEffect(() => {
-    const stringedTokens = JSON.stringify(tokens);
-    if (stringedTokens === cachedTokens) return;
-
-    setCachedTokens(stringedTokens);
-
-    setBlock(buildAST([...tokens], getRootBlock()));
-  }, [tokens]);
-
-  return block;
-};
-
-export default useAST;
+export default buildAST;

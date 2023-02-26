@@ -1,5 +1,5 @@
-import { ConditionalNode } from "../../types.ts";
-import { PushComputeType, Stack } from "./../types.ts";
+import { ConditionalNode, Stack } from "../../types.ts";
+import { PushComputeType} from "./../types.ts";
 import { testArgLength } from "./Verification.ts";
 
 const calculateConditional = (

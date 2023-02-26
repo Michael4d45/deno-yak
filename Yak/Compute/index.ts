@@ -1,9 +1,23 @@
-import { Block } from "../types.ts";
+import { Block, Stack } from "../types.ts";
 import computeNode from "./Nodes/index.ts";
-import { PushComputeType, Stack, StepType } from "./types.ts";
+import { PushComputeType, StepType, Variables } from "./types.ts";
+
+const newBlock = (block: Block): Block => {
+  return {
+    parent: block.parent,
+    scope: {
+      nodes: block.scope.nodes,
+      functions: block.scope.functions,
+      variables: {},
+    },
+  };
+};
 
 const Runner = () => {
-  type ComputeType = ReturnType<typeof compute>;
+  interface ComputeType {
+    block: Block;
+    compute: ReturnType<typeof compute>;
+  }
   const computeStack: ComputeType[] = [];
   const stack: Stack = [];
 
@@ -12,15 +26,24 @@ const Runner = () => {
     stack.length = 0;
   };
 
-  const pushCompute: PushComputeType = (block: Block) =>
-    computeStack.push(compute(block));
+  const pushCompute: PushComputeType = (block: Block) => {
+    const b = newBlock(block);
+    computeStack.push({
+      block: b,
+      compute: compute(b),
+    });
+  };
 
   const compute = (block: Block) => {
     let i = 0;
 
     const computeLine = () => {
       const node = block.scope.nodes[i];
-      computeNode(block, node, stack, pushCompute);
+      computeNode(block, node, stack, (b: Block) =>
+        pushCompute({
+          ...b,
+          parent: block,
+        }));
       i++;
       return node;
     };
@@ -31,10 +54,24 @@ const Runner = () => {
     };
   };
 
+  const getVariables = (): Variables => {
+    return computeStack.reduce(
+      (acc: Variables, curr: ComputeType) =>
+        acc.concat(
+          Object.entries(curr.block.scope.variables).map(([name, stack]) => ({
+            name,
+            stack,
+          })),
+        ),
+      [],
+    );
+  };
+
   const step = (): StepType => {
     if (computeStack.length === 0) return;
 
-    const { computeLine, finished } = computeStack[computeStack.length - 1];
+    const { computeLine, finished } =
+      computeStack[computeStack.length - 1].compute;
 
     if (finished()) {
       computeStack.pop();
@@ -45,15 +82,15 @@ const Runner = () => {
 
     return {
       node,
-      stack: [...stack],
+      stack,
     };
   };
 
   return {
     reset,
     step,
-    stack,
     pushCompute,
+    getVariables,
   };
 };
 

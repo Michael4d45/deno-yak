@@ -1,10 +1,11 @@
-import { Block, ExpressionNode } from "../../types.ts";
-import { PushComputeType, Stack } from "../types.ts";
+import { Block, ExpressionNode, Stack } from "../../types.ts";
+import { PushComputeType } from "../types.ts";
 import calculateBinaryOp from "./BinaryOperator.ts";
 import calculateConditional from "./Conditional.ts";
 import calculateFunctionCall from "./FunctionCall.ts";
 import calculateTernaryOp from "./TernaryOperator.ts";
 import calculateUnaryOp from "./UnaryOperator.ts";
+import calculateVariable from "./Variable.ts";
 
 const computeNode = (
   block: Block,
@@ -25,6 +26,8 @@ const computeNode = (
       return calculateConditional(node, stack, pushCompute);
     case "FUNCTION_CALL":
       return calculateFunctionCall(block, node.value, stack, pushCompute);
+    case "VARIABLE":
+      return calculateVariable(block, node, stack);
   }
 };
 
