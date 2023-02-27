@@ -172,26 +172,32 @@ export type Token = TokenType & BaseToken;
 
 export type Stack = number[];
 
-type BlockParent = Block | null;
+export type ComputeBlockParent = ComputeBlock | null
 
-export interface Block {
-  parent: BlockParent;
+export interface ComputeBlock {
+  parent: ComputeBlockParent;
+  nodes: Nodes;
+  pointer: number;
   scope: Scope;
 }
 
-interface Scope {
+export interface ASTBlock {
+  parent: ASTBlock | null;
   nodes: Nodes;
+}
+
+interface Scope {
   functions: { [name: string]: FunctionDefNode };
   variables: { [name: string]: Stack };
 }
 
-type Nodes = ExpressionNode[];
+export type Nodes = ExpressionNode[];
 
 export interface FunctionDefNode {
   type: "FUNCTION_DEF";
   name: string;
   arity: number;
-  block: Block;
+  block: ASTBlock;
 }
 
 export interface VariableNode {
@@ -209,7 +215,7 @@ interface FunctionCallNode {
 export interface ConditionalNode {
   type: "CONDITIONAL";
   value: Conditional;
-  block: Block;
+  block: ASTBlock;
 }
 
 interface NumberNode {
@@ -240,6 +246,7 @@ interface UnaryOperatorNode {
 export type NodeType =
   | NumberNode
   | FunctionCallNode
+  | FunctionDefNode
   | VariableNode
   | OperatorNode
   | ConditionalNode;

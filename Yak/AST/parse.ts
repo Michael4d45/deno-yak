@@ -1,5 +1,5 @@
 import {
-  Block,
+  ASTBlock,
   ConditionalNode,
   ExpressionNode,
   FunctionDefNode,
@@ -7,17 +7,13 @@ import {
   Token,
 } from "../types.ts";
 
-const getBlockAST = (tokens: Token[], pointer: number, block: Block) =>
-  buildAST(getBlock(tokens, pointer), {
+const getBlockAST = (tokens: Token[], pointer: number, block: ASTBlock) =>
+  buildAST(getASTBlock(tokens, pointer), {
     parent: block,
-    scope: {
-      nodes: [],
-      functions: {},
-      variables: {},
-    },
+    nodes: [],
   });
 
-const getBlock = (tokens: Token[], pointer: number) => {
+const getASTBlock = (tokens: Token[], pointer: number) => {
   if (
     tokens[pointer + 1] === undefined
   ) {
@@ -51,25 +47,24 @@ const getBlock = (tokens: Token[], pointer: number) => {
 };
 
 const parseToken = (
-  block: Block,
+  block: ASTBlock,
   tokens: Token[],
   pointer: number,
 ) => {
   const token = tokens[pointer];
 
   const pushNode = (node?: NodeType) => {
-    block.scope.nodes.push({
+    block.nodes.push({
       ...(token as ExpressionNode),
       ...(node ? node : {}),
     });
   };
 
   if (token.type === "IDENTIFIER") {
-    block.scope.functions[token.name] = {
+    return pushNode({
       type: "FUNCTION_DEF",
       block: getBlockAST(tokens, pointer, block),
-    } as FunctionDefNode;
-    return;
+    } as FunctionDefNode);
   }
 
   if (token.type === "CONDITIONAL") {
@@ -91,7 +86,7 @@ const parseToken = (
   token.errors.push(`Unexpected token`);
 };
 
-const buildAST = (tokens: Token[], block: Block) => {
+const buildAST = (tokens: Token[], block: ASTBlock) => {
   if (tokens.length === 0) return block;
 
   for (let pointer = 0; pointer < tokens.length; pointer++) {

@@ -1,9 +1,9 @@
-import { Block, ExpressionNode, Stack } from "../types.ts";
+import { ASTBlock, ExpressionNode, Stack } from "../types.ts";
 import Runner from "./index.ts";
 
 export type RunnerType = ReturnType<typeof Runner>;
 
-export type PushComputeType = (block: Block) => void;
+export type PushComputeType = (block: ASTBlock) => void;
 
 export type StepType = { node: ExpressionNode; stack: Stack } | undefined;
 

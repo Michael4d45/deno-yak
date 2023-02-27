@@ -1,84 +1,70 @@
-import { Block, Stack } from "../types.ts";
+import { ASTBlock, ComputeBlock, ComputeBlockParent, Stack } from "../types.ts";
 import computeNode from "./Nodes/index.ts";
 import { PushComputeType, StepType, Variables } from "./types.ts";
 
-const newBlock = (block: Block): Block => {
+const newBlock = (
+  block: ASTBlock,
+  parent: ComputeBlockParent,
+): ComputeBlock => {
   return {
-    parent: block.parent,
+    parent: parent,
+    nodes: [...block.nodes],
+    pointer: 0,
     scope: {
-      nodes: block.scope.nodes,
-      functions: block.scope.functions,
+      functions: {},
       variables: {},
     },
   };
 };
 
+const computeLine = (
+  block: ComputeBlock,
+  stack: Stack,
+  pushCompute: PushComputeType,
+) => {
+  const node = block.nodes[block.pointer++];
+  computeNode(block, node, stack, pushCompute);
+  return node;
+};
+
 const Runner = () => {
-  interface ComputeType {
-    block: Block;
-    compute: ReturnType<typeof compute>;
-  }
-  const computeStack: ComputeType[] = [];
   const stack: Stack = [];
+  let currentBlock: ComputeBlockParent = null;
 
   const reset = () => {
-    computeStack.length = 0;
+    currentBlock = null;
     stack.length = 0;
   };
 
-  const pushCompute: PushComputeType = (block: Block) => {
-    const b = newBlock(block);
-    computeStack.push({
-      block: b,
-      compute: compute(b),
-    });
+  const pushCompute: PushComputeType = (block: ASTBlock) => {
+    currentBlock = newBlock(block, currentBlock);
   };
 
-  const compute = (block: Block) => {
-    let i = 0;
-
-    const computeLine = () => {
-      const node = block.scope.nodes[i];
-      computeNode(block, node, stack, (b: Block) =>
-        pushCompute({
-          ...b,
-          parent: block,
-        }));
-      i++;
-      return node;
-    };
-
-    return {
-      computeLine,
-      finished: () => i >= block.scope.nodes.length,
-    };
-  };
-
-  const getVariables = (): Variables => {
-    return computeStack.reduce(
-      (acc: Variables, curr: ComputeType) =>
-        acc.concat(
-          Object.entries(curr.block.scope.variables).map(([name, stack]) => ({
-            name,
-            stack,
-          })),
-        ),
-      [],
+  const getBlockVariables = (
+    block: ComputeBlockParent,
+    variables: Variables,
+  ): Variables => {
+    if (block === null) return [];
+    variables = variables.concat(
+      Object.entries(block.scope.variables).map(([name, stack]) => ({
+        name,
+        stack,
+      })),
     );
+    return variables.concat(getBlockVariables(block.parent, variables));
   };
+
+  const getVariables = (): Variables => getBlockVariables(currentBlock, []);
 
   const step = (): StepType => {
-    if (computeStack.length === 0) return;
+    if (currentBlock === null) return;
 
-    const { computeLine, finished } =
-      computeStack[computeStack.length - 1].compute;
-
-    if (finished()) {
-      computeStack.pop();
+    if (currentBlock.pointer >= currentBlock.nodes.length) {
+      currentBlock = currentBlock.parent;
       return step();
     }
 
-    const node = computeLine();
+    const node = computeLine(currentBlock, stack, pushCompute);
 
     return {
       node,

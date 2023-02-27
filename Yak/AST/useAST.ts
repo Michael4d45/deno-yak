@@ -1,6 +1,6 @@
 import { useEffect, useState } from "preact/hooks";
-import { Block, Token } from "../types.ts";
-import buildAST from "./pasre.ts";
+import { ASTBlock, Token } from "../types.ts";
+import buildAST from "./parse.ts";
 
 interface Props {
   tokens: Token[];
@@ -8,16 +8,12 @@ interface Props {
 
 const getRootBlock = () => ({
   parent: null,
-  scope: {
-    nodes: [],
-    functions: {},
-    variables: {},
-  },
+  nodes: [],
 });
 
 const useAST = ({ tokens }: Props) => {
   const [cachedTokens, setCachedTokens] = useState("");
-  const [block, setBlock] = useState<Block>(getRootBlock());
+  const [block, setBlock] = useState<ASTBlock>(getRootBlock());
 
   useEffect(() => {
     const stringedTokens = JSON.stringify(tokens);

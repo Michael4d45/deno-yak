@@ -1,9 +1,9 @@
-import { Block, Stack, VariableNode } from "../../types.ts";
+import { ComputeBlock, Stack, VariableNode } from "../../types.ts";
 import { testArgLength } from "./Verification.ts";
 
 const getVariable = (
   name: string,
-  block: Block,
+  block: ComputeBlock,
 ): Stack | null => {
   const variable = block.scope.variables[name];
 
@@ -14,7 +14,7 @@ const getVariable = (
   return getVariable(name, block.parent);
 };
 
-const createVar = (name: string, block: Block): Stack => {
+const createVar = (name: string, block: ComputeBlock): Stack => {
   return block.scope.variables[name] = [];
 };
 
@@ -24,7 +24,7 @@ const transferTop = (from: Stack, to: Stack, count: number) => {
 };
 
 const calculateVariable = (
-  block: Block,
+  block: ComputeBlock,
   node: VariableNode,
   stack: Stack,
 ) => {
