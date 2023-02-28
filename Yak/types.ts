@@ -73,9 +73,23 @@ export const variableOperations = [
 
 export type VariableOperation = typeof variableOperations[number];
 
-export type VariableName = `${number}${VariableOperation}${string}`;
+export const STACK = "STACK" as const;
 
-export type Consumes = number | "ALL";
+export const TAKE_CONSUMES = "TAKE_CONSUMES" as const;
+
+export const VAR_DECLARATION = "[]" as const;
+
+export type VariableDefName = `${typeof VAR_DECLARATION}${string}`;
+
+export type Consumes = typeof STACK | typeof TAKE_CONSUMES;
+
+export type VariableName = `${VariableOperation}${string}`;
+
+interface VariableDefToken {
+  type: "VARIABLE_DEF";
+  value: VariableDefName;
+  name: string;
+}
 
 interface VariableToken {
   type: "VARIABLE";
@@ -114,6 +128,7 @@ export type TokenType =
   | NumberToken
   | OperatorToken
   | IdentifierToken
+  | VariableDefToken
   | VariableToken
   | LeftBracketToken
   | RightBracketToken
@@ -131,15 +146,17 @@ export type Token = TokenType & BaseToken;
 /**
  * NODES -> STATEMENT (NODES | <EMPTY>)
  *
- * STATEMENT -> (FUNCTION_DEF | EXPRESSION)
+ * STATEMENT -> (FUNCTION_DEF | VAR_DEF | EXPRESSION)
  *
  * EXPRESSION -> (NUMBER | FUNCTION_CALL | VAR | OPERATOR | CONDITIONAL)
  *
- * VAR -> CONSUMES->VAR_NAME
+ * VAR_DEF -> []VAR_NAME
  *
- * VAR -> CONSUMES<-VAR_NAME
- * 
- * CONSUMES -> (INTEGER | <EMPTY>) // EMPTY indicates all
+ * VAR -> CONSUMES ->VAR_NAME
+ *
+ * VAR -> CONSUMES <-VAR_NAME
+ *
+ * CONSUMES -> (INTEGER | "STACK") // "STACK" indicates all
  *
  * VAR_NAME -> NAME
  *
@@ -172,7 +189,7 @@ export type Token = TokenType & BaseToken;
 
 export type Stack = number[];
 
-export type ComputeBlockParent = ComputeBlock | null
+export type ComputeBlockParent = ComputeBlock | null;
 
 export interface ComputeBlock {
   parent: ComputeBlockParent;
@@ -200,6 +217,11 @@ export interface VariableNode {
   consumes: Consumes;
   name: string;
   operation: VariableOperation;
+}
+
+export interface VariableDefNode {
+  type: "VARIABLE_DEF";
+  name: string;
 }
 
 interface FunctionCallNode {
@@ -242,6 +264,7 @@ export type NodeType =
   | NumberNode
   | FunctionCallNode
   | FunctionDefNode
+  | VariableDefNode
   | VariableNode
   | OperatorNode
   | ConditionalNode;

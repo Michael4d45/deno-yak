@@ -73,7 +73,8 @@ const parseToken = (
     token.type === "NUMBER" ||
     token.type === "BINARY_OPERATOR" ||
     token.type === "UNARY_OPERATOR" ||
-    token.type === "TERNARY_OPERATOR"
+    token.type === "TERNARY_OPERATOR" ||
+    token.type === "VARIABLE_DEF"
   ) {
     return pushNode();
   }

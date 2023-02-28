@@ -30,6 +30,8 @@ const computeNode = (
       return calculateVariable(block, node, stack);
     case "FUNCTION_DEF":
       return block.scope.functions[node.name] = node;
+    case "VARIABLE_DEF":
+      return block.scope.variables[node.name] = [];
   }
 };
 

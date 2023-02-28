@@ -23,21 +23,23 @@ const Input: FunctionComponent<Props> = ({ onSubmit }) => {
       <textarea class="w-full h-full">
         {`1#fib
   {
-    . 1->MY_VAR
+    . 1 ->MY_VAR
      . . 1 == <-> 0 == | ! ?
      {
         . 1 - fib
         <-> 2 - fib
-        . 1->test
+        . 1 ->test
         +
      }
   }
 
-->MY_VAR
+[]MY_VAR
+[]test
 
 5 fib
 
 
+2
 <-MY_VAR`}
       </textarea>
       <button

@@ -1,4 +1,12 @@
-import { ComputeBlock, Stack, VariableNode } from "../../types.ts";
+import {
+  ComputeBlock,
+  STACK,
+  Stack,
+  TAKE_CONSUMES,
+  VariableNode,
+  VariableOperation,
+} from "../../types.ts";
+import { Variable } from "../types.ts";
 import { testArgLength } from "./Verification.ts";
 
 const getVariable = (
@@ -14,10 +22,6 @@ const getVariable = (
   return getVariable(name, block.parent);
 };
 
-const createVar = (name: string, block: ComputeBlock): Stack => {
-  return block.scope.variables[name] = [];
-};
-
 const transferTop = (from: Stack, to: Stack, count: number) => {
   const top = from.splice(from.length - count);
   to.push(...top.reverse());
@@ -28,33 +32,45 @@ const calculateVariable = (
   node: VariableNode,
   stack: Stack,
 ) => {
-  let variable = getVariable(node.name, block);
+  const variable = getVariable(node.name, block);
 
-  if (node.operation === "->") {
-    if (node.consumes !== "ALL") {
-      testArgLength(node.consumes, stack, node.name);
-    }
-    if (variable === null) {
-      variable = createVar(node.name, block);
-    }
-
-    const consumes = node.consumes === "ALL" ? stack.length : node.consumes;
-
-    transferTop(stack, variable, consumes);
+  if (variable === null) {
+    throw new Error(`Variable '${node.name}' not defined`);
   }
 
-  if (node.operation === "<-") {
-    if (variable === null) {
-      throw new Error(`Variable '${node.name}' not defined`);
-    }
-    if (node.consumes !== "ALL") {
-      testArgLength(node.consumes, variable, node.name);
-    }
+  let consumesNumber = Number();
 
-    const consumes = node.consumes === "ALL" ? variable.length : node.consumes;
-
-    transferTop(variable, stack, consumes);
+  if (node.consumes === TAKE_CONSUMES) {
+    testArgLength(1, stack, node.name);
+    const top = stack.pop();
+    if (top !== undefined) {
+      if (!(Number.isInteger(top) && top > 0)) {
+        throw new Error(`Expected positive integer, got ${top}`);
+      }
+      consumesNumber = top;
+    } else {
+      throw new Error("Against all odds, this error has been reached");
+    }
   }
+
+  const operationTransfer = (
+    op: VariableOperation,
+    from: Stack,
+    to: Stack,
+  ) => {
+    if (node.operation === op) {
+      if (node.consumes === TAKE_CONSUMES) {
+        testArgLength(consumesNumber, from, node.name);
+      } else {
+        consumesNumber = from.length;
+      }
+
+      transferTop(from, to, consumesNumber);
+    }
+  };
+
+  operationTransfer("->", stack, variable);
+  operationTransfer("<-", variable, stack);
 };
 
 export default calculateVariable;

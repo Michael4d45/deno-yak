@@ -1,5 +1,8 @@
 import {
+  Consumes,
   nameReg,
+  STACK,
+  TAKE_CONSUMES,
   VariableName,
   VariableOperation,
   variableOperations,
@@ -17,14 +20,14 @@ const testVariableOp = (
   operation: VariableOperation,
 ) => {
   if (token.includes(operation)) {
-    const [consumes, name] = token.split(operation);
+    let [consumes, name] = token.split(operation);
 
     let error = "";
 
-    if (isNaN(Number(consumes))) {
-      error += `Expected Number: ${consumes}`;
-    } else if (consumes !== "" && Number(consumes) <= 0) {
-      error += `Expected Number greater than 0: ${consumes}`;
+    if (consumes === "") {
+      consumes = TAKE_CONSUMES;
+    } else if (consumes !== STACK) {
+      error += `Expected "STACK" or <EMPTY> : ${consumes}`;
     }
 
     if (!nameReg.test(name)) {
@@ -35,9 +38,9 @@ const testVariableOp = (
     pushToken({
       type: "VARIABLE",
       value: token as VariableName,
-      consumes: consumes !== "" ? Number(consumes) : "ALL",
+      consumes: consumes as Consumes,
       name,
-      operation: operation,
+      operation,
     }, error);
 
     return true;
