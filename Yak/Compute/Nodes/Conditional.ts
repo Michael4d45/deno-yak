@@ -17,7 +17,7 @@ const calculateConditional = (
   const isFalsy = op === "?" ? arg === 0 : arg !== 0;
 
   if (!isFalsy) {
-    pushCompute(node.block);
+    pushCompute(node.nodes);
   }
 };
 

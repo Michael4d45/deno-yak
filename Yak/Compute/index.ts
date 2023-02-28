@@ -1,14 +1,14 @@
-import { ASTBlock, ComputeBlock, ComputeBlockParent, Stack } from "../types.ts";
+import { Nodes, ComputeBlock, ComputeBlockParent, Stack } from "../types.ts";
 import computeNode from "./Nodes/index.ts";
 import { PushComputeType, StepType, Variables } from "./types.ts";
 
 const newBlock = (
-  block: ASTBlock,
+  nodes: Nodes,
   parent: ComputeBlockParent,
 ): ComputeBlock => {
   return {
     parent: parent,
-    nodes: [...block.nodes],
+    nodes: [...nodes],
     pointer: 0,
     scope: {
       functions: {},
@@ -36,8 +36,8 @@ const Runner = () => {
     stack.length = 0;
   };
 
-  const pushCompute: PushComputeType = (block: ASTBlock) => {
-    currentBlock = newBlock(block, currentBlock);
+  const pushCompute: PushComputeType = (nodes: Nodes) => {
+    currentBlock = newBlock(nodes, currentBlock);
   };
 
   const getBlockVariables = (

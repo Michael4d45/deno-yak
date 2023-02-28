@@ -1,8 +1,8 @@
-import { Block, FunctionDefNode, Stack } from "../../types.ts";
+import { ComputeBlock, FunctionDefNode, Stack } from "../../types.ts";
 import { PushComputeType } from "./../types.ts";
 import { testArgLength } from "./Verification.ts";
 
-const getFunction = (name: string, block: Block): FunctionDefNode | null => {
+const getFunction = (name: string, block: ComputeBlock): FunctionDefNode | null => {
   const func = block.scope.functions[name];
 
   if (func !== undefined) return func;
@@ -13,7 +13,7 @@ const getFunction = (name: string, block: Block): FunctionDefNode | null => {
 };
 
 const calculateFunctionCall = (
-  block: Block,
+  block: ComputeBlock,
   name: string,
   stack: Stack,
   pushCompute: PushComputeType,
@@ -26,7 +26,7 @@ const calculateFunctionCall = (
 
   testArgLength(func.arity, stack, name);
 
-  pushCompute(func.block);
+  pushCompute(func.nodes);
 };
 
 export default calculateFunctionCall;

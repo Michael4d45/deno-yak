@@ -181,11 +181,6 @@ export interface ComputeBlock {
   scope: Scope;
 }
 
-export interface ASTBlock {
-  parent: ASTBlock | null;
-  nodes: Nodes;
-}
-
 interface Scope {
   functions: { [name: string]: FunctionDefNode };
   variables: { [name: string]: Stack };
@@ -197,7 +192,7 @@ export interface FunctionDefNode {
   type: "FUNCTION_DEF";
   name: string;
   arity: number;
-  block: ASTBlock;
+  nodes: Nodes;
 }
 
 export interface VariableNode {
@@ -215,7 +210,7 @@ interface FunctionCallNode {
 export interface ConditionalNode {
   type: "CONDITIONAL";
   value: Conditional;
-  block: ASTBlock;
+  nodes: Nodes;
 }
 
 interface NumberNode {

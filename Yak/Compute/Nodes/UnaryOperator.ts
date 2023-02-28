@@ -1,5 +1,4 @@
-import { UnaryOperator } from "../../types.ts";
-import { Stack } from "./../types.ts";
+import { Stack, UnaryOperator } from "../../types.ts";
 import { testArgLength } from "./Verification.ts";
 
 const calculateUnaryOp = (
