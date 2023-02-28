@@ -24,7 +24,7 @@ const Input: FunctionComponent<Props> = ({ onSubmit }) => {
         {`1#fib
   {
     . 1->MY_VAR
-     . . 1 == <-> 0 == | !
+     . . 1 == <-> 0 == | ! ?
      {
         . 1 - fib
         <-> 2 - fib
