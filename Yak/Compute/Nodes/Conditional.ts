@@ -8,13 +8,10 @@ const calculateConditional = (
   pushCompute: PushComputeType,
 ) => {
   testArgLength(1, stack, node.value);
-  const op = node.value;
-
   const arg = stack.pop() as number;
 
   // If op is '?' isFalsy is true if arg is 0
-  // If op is '!' isFalsy is true if arg is not 0
-  const isFalsy = op === "?" ? arg === 0 : arg !== 0;
+  const isFalsy = arg === 0;
 
   if (!isFalsy) {
     pushCompute(node.nodes);

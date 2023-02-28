@@ -14,6 +14,7 @@ export const binaryOperators = [
 export const unaryOperators = [
   ".",
   "@",
+  "!",
 ] as const;
 
 export const ternaryOperators = [
@@ -22,7 +23,6 @@ export const ternaryOperators = [
 
 export const conditionalOperators = [
   "?",
-  "!",
 ] as const;
 
 export type TernaryOperator = typeof ternaryOperators[number];
@@ -149,7 +149,7 @@ export type Token = TokenType & BaseToken;
  *
  * BINARY_OPERATOR -> EXPRESSION<2> ('+' | '-' | '*' | '/' | '%' | '==')
  *
- * UNARY_OPERATOR -> EXPRESSION<1> ('.')
+ * UNARY_OPERATOR -> EXPRESSION<1> ('.', '@', '!')
  *
  * EXPRESSION[N] -> ((EXPRESSION EXPRESSION<N - 1>) | <EMPTY><N IS 0>)
  *

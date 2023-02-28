@@ -14,5 +14,9 @@ const calculateUnaryOp = (
   if (op === "@") {
     return stack.pop();
   }
+
+  if (op === "!") {
+    return stack.push(stack.pop() === 1 ? 0 : 1);
+  }
 };
 export default calculateUnaryOp;
