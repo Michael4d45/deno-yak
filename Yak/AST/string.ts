@@ -1,7 +1,7 @@
 import { Fragment, StringToken } from "../types.ts";
 
 export const buildStringFragments = (token: StringToken) => {
-  const input = token.value.slice(1, token.value.length - 2);
+  const input = token.value.slice(1, -1);
 
   const outputArray: Fragment[] = [];
 
