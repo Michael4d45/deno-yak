@@ -5,8 +5,10 @@ import { PushTokenType } from "./types.ts";
 const sanitize = (str: string) => str.replace(/\/\/.*/g, "");
 
 // This disgusting regex is brought to you by chatGPT.
-// 'write js code that splits a string by spaces except for strings that start and end with ", strings can contain escaped \"
-// with regex'
+    // 'write js code that splits a string by 
+    // spaces except for strings that start and
+    // end with ", strings can contain escaped \".
+    // with regex'
 const splitString = (str: string) =>
   str.match(/("[^"\\]*(?:\\.[^"\\]*)*"|\S+)/g)?.filter(Boolean);
 
