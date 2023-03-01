@@ -3,6 +3,7 @@ import { PushComputeType } from "../types.ts";
 import calculateBinaryOp from "./BinaryOperator.ts";
 import calculateConditional from "./Conditional.ts";
 import calculateFunctionCall from "./FunctionCall.ts";
+import calculateString from "./String.ts";
 import calculateTernaryOp from "./TernaryOperator.ts";
 import calculateUnaryOp from "./UnaryOperator.ts";
 import calculateVariable from "./Variable.ts";
@@ -32,6 +33,8 @@ const computeNode = (
       return block.scope.functions[node.name] = node;
     case "VARIABLE_DEF":
       return block.scope.variables[node.name] = [];
+    case "STRING":
+      return calculateString(node, stack);
   }
 };
 

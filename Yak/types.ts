@@ -99,6 +99,16 @@ interface VariableToken {
   operation: VariableOperation;
 }
 
+export const STRING_QUOTE = '"';
+
+export type StringType =
+  `${typeof STRING_QUOTE}${string}${typeof STRING_QUOTE}`;
+
+export interface StringToken {
+  type: "STRING";
+  value: StringType;
+}
+
 interface LeftBracketToken {
   type: "LEFT_BRACKET";
   value: "{";
@@ -134,6 +144,7 @@ export type TokenType =
   | RightBracketToken
   | ConditionalToken
   | FunctionToken
+  | StringToken
   | UnknownToken;
 
 interface BaseToken {
@@ -148,7 +159,17 @@ export type Token = TokenType & BaseToken;
  *
  * STATEMENT -> (FUNCTION_DEF | VAR_DEF | EXPRESSION)
  *
- * EXPRESSION -> (NUMBER | FUNCTION_CALL | VAR | OPERATOR | CONDITIONAL)
+ * EXPRESSION -> (NUMBER | FUNCTION_CALL | VAR | OPERATOR | CONDITIONAL | STRING)
+ *
+ * STRING -> '"'FORMAT_STRING'"'
+ *
+ * FORMAT_STRING -> <ASCII CHARACTERS> | TAKE_FROM_STACK | ESCAPE_CHARACTERS | FORMAT_STRING | <EMPTY>
+ *
+ * TAKE_FROM_STACK -> {INTEGER}
+ *
+ * ESCAPE_CHARACTERS -> ESCAPE ('"' | '{' | '}' '\')
+ *
+ * ESCAPE -> '\'
  *
  * VAR_DEF -> []VAR_NAME
  *
@@ -212,6 +233,14 @@ export interface FunctionDefNode {
   nodes: Nodes;
 }
 
+export type Fragment = string | number;
+
+export interface StringNode {
+  type: "STRING";
+  value: StringType;
+  fragments: Fragment[];
+}
+
 export interface VariableNode {
   type: "VARIABLE";
   consumes: Consumes;
@@ -264,6 +293,7 @@ export type NodeType =
   | NumberNode
   | FunctionCallNode
   | FunctionDefNode
+  | StringNode
   | VariableDefNode
   | VariableNode
   | OperatorNode

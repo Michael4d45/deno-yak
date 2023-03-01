@@ -6,6 +6,7 @@ import testIdentifier from "./Identifier.ts";
 import testLeftBracket from "./LeftBracket.ts";
 import testNumber from "./Number.ts";
 import testRightBracket from "./RightBracket.ts";
+import testString from "./String.ts";
 import testTernaryOperator from "./TernaryOperator.ts";
 import testUnaryOperator from "./UnaryOperator.ts";
 import unknown from "./Unknown.ts";
@@ -14,6 +15,7 @@ import testVariableDef from "./VariableDef.ts";
 
 const tests: TestType[] = [
   testNumber,
+  testString,
   testUnaryOperator,
   testBinaryOperator,
   testTernaryOperator,

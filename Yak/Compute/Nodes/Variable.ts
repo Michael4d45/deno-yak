@@ -1,12 +1,10 @@
 import {
   ComputeBlock,
-  STACK,
   Stack,
   TAKE_CONSUMES,
   VariableNode,
   VariableOperation,
 } from "../../types.ts";
-import { Variable } from "../types.ts";
 import { testArgLength } from "./Verification.ts";
 
 const getVariable = (
