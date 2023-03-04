@@ -1,5 +1,5 @@
 import { FunctionComponent } from "preact";
-import { Token } from "../Yak/types.ts";
+import { Token } from "../../../Yak/types.ts";
 
 interface Props {
   token: Token;

@@ -4,6 +4,8 @@ import useCompute from "./Compute/useCompute.ts";
 import tokenizer from "./Tokenizer/index.ts";
 import { Token } from "./types.ts";
 
+export type YakType = ReturnType<typeof useYak>;
+
 const useYak = () => {
   const [tokens, setTokens] = useState<Token[]>([]);
   const [tokenErrors, setTokenErrors] = useState<Token[]>([]);
@@ -30,7 +32,9 @@ const useYak = () => {
   });
 
   useEffect(() => {
-    const newTokenErrors = tokens.filter((token: Token) => token.errors.length > 0);
+    const newTokenErrors = tokens.filter((token: Token) =>
+      token.errors.length > 0
+    );
 
     setTokenErrors(newTokenErrors);
 
@@ -52,7 +56,7 @@ const useYak = () => {
     reset,
     fast,
     variables,
-  }
-}
+  };
+};
 
 export default useYak;
