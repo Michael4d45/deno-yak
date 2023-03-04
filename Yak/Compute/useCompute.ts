@@ -1,5 +1,5 @@
 import { useEffect, useState } from "preact/hooks";
-import { Block, Stack } from "../types.ts";
+import { Nodes, Stack } from "../types.ts";
 import Runner from "./index.ts";
 import { RunnerType, StepType, Variables } from "./types.ts";
 
@@ -8,7 +8,7 @@ interface Props {
 }
 
 const useCompute = ({ setPos }: Props) => {
-  const [block, setBlock] = useState<Block | null>(null);
+  const [block, setBlock] = useState<Nodes | null>(null);
   const [stack, setStack] = useState<Stack>([]);
   const [runner] = useState<RunnerType>(Runner());
   const [calcError, setCalcError] = useState("");
