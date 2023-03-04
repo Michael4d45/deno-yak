@@ -1,9 +1,9 @@
-import { Fragment, StringToken } from "../types.ts";
+import { Fragments, StringToken } from "../types.ts";
 
 export const buildStringFragments = (token: StringToken) => {
   const input = token.value.slice(1, -1);
 
-  const outputArray: Fragment[] = [];
+  const outputArray: Fragments = [];
 
   // Matches {INTEGER}, ignores escaped braces
   const replaceReg = /(?<!\\)\{[0-9]+\}/g

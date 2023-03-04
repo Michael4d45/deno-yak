@@ -235,10 +235,12 @@ export interface FunctionDefNode {
 
 export type Fragment = string | number;
 
+export type Fragments = Fragment[];
+
 export interface StringNode {
   type: "STRING";
   value: StringType;
-  fragments: Fragment[];
+  fragments: Fragments;
 }
 
 export interface VariableNode {
