@@ -1,3 +1,4 @@
+import { getBuffer } from "../../../OutputBuffer/useBuffer.ts";
 import { Stack, StringNode } from "../../types.ts";
 import { testArgLength } from "./Verification.ts";
 
@@ -21,7 +22,8 @@ const calculateString = (
     return args[fragment - 1];
   });
 
-  console.log(replaced.join(""));
+//  console.log(replaced.join(""));
+  getBuffer().write(replaced.join(""))
 };
 
 export default calculateString;
