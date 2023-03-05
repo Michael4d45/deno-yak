@@ -3,11 +3,10 @@ import { useEffect, useRef } from "preact/hooks";
 const ITERATE=`
 
 []n
-[]i
 0#iterate {
     // for i in range(n - 1):
-    1 <-n . 1 ->n
-    1 <-i . 1 + 1 ->i
+    2 <-n . 1 ->n
+    <-> . 1 + 1 ->n
     == ! ? {
         // a, b = b, a + b
         // (ba -- bab)
@@ -25,13 +24,14 @@ const ITERATE=`
     // if n <= 1:
     . 1 <= . ? { @
         // return n
+        .
     1 } ! ? {
         1 - 1 ->n
         // a, b = 0, 1
         0
         1
         
-        0 1 ->i
+        0 1 ->n
         iterate
 
         // return b
