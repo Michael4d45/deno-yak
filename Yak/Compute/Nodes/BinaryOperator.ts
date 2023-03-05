@@ -11,7 +11,7 @@ const calculateBinaryOp = (
   const second = stack.pop() as number;
 
   if (op === "+") {
-    return stack.push(first + second);
+    return stack.push(second + first);
   }
 
   if (op === "-") {
@@ -19,15 +19,31 @@ const calculateBinaryOp = (
   }
 
   if (op === "*") {
-    return stack.push(first * second);
+    return stack.push(second * first);
   }
 
   if (op === "%") {
-    return stack.push(first % second);
+    return stack.push(second % first);
   }
 
   if (op === "==") {
-    return stack.push(first === second ? 1 : 0);
+    return stack.push(second === first ? 1 : 0);
+  }
+
+  if (op === "<") {
+    return stack.push(second < first ? 1 : 0);
+  }
+
+  if (op === ">") {
+    return stack.push(second > first ? 1 : 0);
+  }
+
+  if (op === "<=") {
+    return stack.push(second <= first ? 1 : 0);
+  }
+
+  if (op === ">=") {
+    return stack.push(second >= first ? 1 : 0);
   }
 
   if (op === "|") {
