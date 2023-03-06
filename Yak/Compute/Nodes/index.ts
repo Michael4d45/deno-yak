@@ -35,6 +35,8 @@ const computeNode = (
       return block.scope.variables[node.name] = [];
     case "STRING":
       return calculateString(node, stack);
+    default:
+      console.error("WHAT?!?!?!?!", node)
   }
 };
 

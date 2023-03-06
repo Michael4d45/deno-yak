@@ -22,10 +22,10 @@ const ITERATE=`
 
 1#fib {
     // if n <= 1:
-    . 1 <= . ? { @
+    . 1 <= ? {
         // return n
         .
-    1 } ! ? {
+    } : {
         1 - 1 ->n
         // a, b = 0, 1
         0
@@ -38,7 +38,7 @@ const ITERATE=`
     }
 }
 
-50 . fib
+500 . fib
 
 "Fib({3})={1}"
 
@@ -68,10 +68,10 @@ const MEMO = `
 // (n,fib(n),a, -- fib(n),a,n)
 2#MEMOIZE
 {
- IS_MEMOIZED ! . ? { @ 
+ IS_MEMOIZED ! ? { 
   1 ->memo_index
   . 1 ->memo
-  1 } ! ? {
+  } : {
     @
   }
 }
@@ -88,10 +88,10 @@ const MEMO = `
   1 ->temp_memo_index
   1 <-check
   . 1 ->check
-  == . ? { @
+  == ? {
     1 <-temp_memo
     . 1 ->temp_memo
-  1 } ! ? {
+  } : {
     GET_ME
   }
   1 <-temp_memo
@@ -112,9 +112,9 @@ const MEMO = `
 // (n -- fib(n))
 1#FIB 
 {
-  IS_MEMOIZED . ? { @
+  IS_MEMOIZED ? {
     GET_MEMO
-  1 } ! ? {
+  } : {
     . 1 ->n
     . 1 - FIB 
     <-> 2 - FIB
@@ -130,24 +130,15 @@ const MEMO = `
 
 const FIB = `1#fib
 {
-  . 1 ->MY_VAR
   . . 1 == <-> 0 == | ! ?
   {
     . 1 - fib
     <-> 2 - fib
-    . 1 ->test
     +
   }
 }
-
-[]MY_VAR
-[]test
-
 5 fib
-
-
-2
-<-MY_VAR`
+`
 
 const TextArea = () => {
   const inputRef = useRef<HTMLTextAreaElement>(null);

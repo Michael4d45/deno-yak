@@ -17,6 +17,8 @@ const parseToken = (
 ) => {
   const token = tokens[pointer];
 
+  const getProceedure = () => buildAST(getNodes(tokens, pointer));
+
   const pushNode = (node?: NodeType) => {
     nodes.push({
       ...(token as ExpressionNode),
@@ -27,13 +29,24 @@ const parseToken = (
   if (token.type === "IDENTIFIER") {
     return pushNode({
       type: "FUNCTION_DEF",
-      nodes: buildAST(getNodes(tokens, pointer), []),
+      nodes: getProceedure(),
     } as FunctionDefNode);
   }
 
-  if (token.type === "CONDITIONAL") {
+  if (token.type === "CONDITIONAL_IF") {
+    const if_nodes = getProceedure();
+    let else_nodes: Nodes = [];
+    if (pointer + 1 < tokens.length) {
+      const elseToken = tokens[pointer + 1];
+      if (elseToken.type === "CONDITIONAL_ELSE") {
+        tokens.splice(pointer, 1);
+        else_nodes = getProceedure();
+      }
+    }
     return pushNode({
-      nodes: buildAST(getNodes(tokens, pointer), []),
+      type: "CONDITIONAL",
+      if_nodes,
+      else_nodes,
     } as ConditionalNode);
   }
 
@@ -57,7 +70,9 @@ const parseToken = (
   token.errors.push(`Unexpected token`);
 };
 
-const buildAST = (tokens: Token[], nodes: Nodes) => {
+const buildAST = (tokens: Token[]) => {
+  const nodes: Nodes = [];
+
   if (tokens.length === 0) return nodes;
 
   for (let pointer = 0; pointer < tokens.length; pointer++) {

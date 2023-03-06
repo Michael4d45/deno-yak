@@ -22,8 +22,7 @@ const calculateString = (
     return args[fragment - 1];
   });
 
-//  console.log(replaced.join(""));
-  getBuffer().write(replaced.join(""))
+  getBuffer().write(replaced.join(""));
 };
 
 export default calculateString;

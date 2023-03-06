@@ -16,7 +16,7 @@ const useAST = ({ tokens }: Props) => {
 
     setCachedTokens(stringedTokens);
 
-    setBlock(buildAST([...tokens], []));
+    setBlock(buildAST([...tokens]));
   }, [tokens]);
 
   return block;

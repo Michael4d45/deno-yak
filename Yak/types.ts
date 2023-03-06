@@ -25,14 +25,14 @@ export const ternaryOperators = [
   "<<<",
 ] as const;
 
-export const conditionalOperators = [
-  "?",
-] as const;
+export const CONDITIONAL_IF = "?" as const;
+export const CONDITIONAL_ELSE = ":" as const;
 
 export type TernaryOperator = typeof ternaryOperators[number];
 export type BinaryOperator = typeof binaryOperators[number];
 export type UnaryOperator = typeof unaryOperators[number];
-export type Conditional = typeof conditionalOperators[number];
+export type ConditionalIf = typeof CONDITIONAL_IF;
+export type ConditionalElse = typeof CONDITIONAL_ELSE;
 
 interface NumberToken {
   type: "NUMBER";
@@ -123,9 +123,14 @@ interface RightBracketToken {
   value: "}";
 }
 
-interface ConditionalToken {
-  type: "CONDITIONAL";
-  value: Conditional;
+interface ConditionalIfToken {
+  type: "CONDITIONAL_IF";
+  value: ConditionalIf;
+}
+
+interface ConditionalElseToken {
+  type: "CONDITIONAL_ELSE";
+  value: ConditionalElse;
 }
 
 interface FunctionToken {
@@ -146,7 +151,8 @@ export type TokenType =
   | VariableToken
   | LeftBracketToken
   | RightBracketToken
-  | ConditionalToken
+  | ConditionalIfToken
+  | ConditionalElseToken
   | FunctionToken
   | StringToken
   | UnknownToken;
@@ -266,8 +272,8 @@ interface FunctionCallNode {
 
 export interface ConditionalNode {
   type: "CONDITIONAL";
-  value: Conditional;
-  nodes: Nodes;
+  if_nodes: Nodes;
+  else_nodes: Nodes;
 }
 
 interface NumberNode {
