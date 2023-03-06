@@ -22,6 +22,10 @@ const calculateBinaryOp = (
     return stack.push(second * first);
   }
 
+  if (op === "/") {
+    return stack.push(second / first);
+  }
+
   if (op === "%") {
     return stack.push(second % first);
   }

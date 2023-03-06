@@ -2,6 +2,7 @@ export const binaryOperators = [
   "+",
   "-",
   "*",
+  "/",
   "%",
   "==",
   ">",
@@ -201,8 +202,10 @@ export type Token = TokenType & BaseToken;
  *
  * EXPRESSION[N] -> ((EXPRESSION EXPRESSION<N - 1>) | <EMPTY><N IS 0>)
  *
- * CONDITIONAL -> EXPRESSION<1> '?' BLOCK
- *
+ * CONDITIONAL -> EXPRESSION<1> '?' BLOCK ( ELSE )
+ * 
+ * ELSE -> (':' BLOCK ) | <EMPTY>
+ * 
  * FUNCTION_DEF -> IDENTIFIER BLOCK
  *
  * IDENTIFIER -> ARITY'#'FUNCTION_NAME
