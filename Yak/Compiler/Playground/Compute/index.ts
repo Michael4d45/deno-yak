@@ -1,4 +1,4 @@
-import { Nodes, ComputeBlock, ComputeBlockParent, Stack } from "../types.ts";
+import { Nodes, ComputeBlock, ComputeBlockParent, Stack } from "../../../types.ts";
 import computeNode from "./Nodes/index.ts";
 import { PushComputeType, StepType, Variables } from "./types.ts";
 

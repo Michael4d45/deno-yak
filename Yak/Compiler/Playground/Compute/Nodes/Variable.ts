@@ -1,10 +1,4 @@
-import {
-  ComputeBlock,
-  Stack,
-  TAKE_CONSUMES,
-  VariableNode,
-  VariableOperation,
-} from "../../types.ts";
+import { ComputeBlock, Stack, TAKE_CONSUMES, VariableNode, VariableOperation } from "../../../../types.ts";
 import { testArgLength } from "./Verification.ts";
 
 const getVariable = (

@@ -1,7 +1,7 @@
 import InputPanel from "../components/InputPanel/Panel.tsx";
 import OutputPanel from "../components/OutputPanel/Panel.tsx";
 import TokenPanel from "../components/TokenPanel/Panel.tsx";
-import useYak from "../Yak/useYak.ts";
+import useYak from "../Yak/Compiler/Playground/useYak.ts";
 
 const PlayGround = () => {
   const yak = useYak();

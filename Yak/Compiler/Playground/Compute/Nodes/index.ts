@@ -1,4 +1,4 @@
-import { ComputeBlock, ExpressionNode, Stack } from "../../types.ts";
+import { ComputeBlock, ExpressionNode, Stack } from "../../../../types.ts";
 import { PushComputeType } from "../types.ts";
 import calculateBinaryOp from "./BinaryOperator.ts";
 import calculateConditional from "./Conditional.ts";

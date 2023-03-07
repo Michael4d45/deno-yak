@@ -1,7 +1,7 @@
 import { useEffect, useState } from "preact/hooks";
-import { Nodes, Stack } from "../types.ts";
-import Runner from "./index.ts";
-import { RunnerType, StepType, Variables } from "./types.ts";
+import { Nodes, Stack } from "../../types.ts";
+import Runner from "./Compute/index.ts";
+import { RunnerType, StepType, Variables } from "./Compute/types.ts";
 
 interface Props {
   setPos: (pos: number) => void;

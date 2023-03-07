@@ -18,7 +18,7 @@ const Console = () => {
   useBuffer(onWrite);
 
   return (
-    <div ref={consoleRef} class="overflow-y-auto h-full">
+    <div ref={consoleRef} class="overflow-y-auto h-full whitespace-pre">
       {lines.map((line, index) => (
         <div key={index}>{line}</div>
       ))}

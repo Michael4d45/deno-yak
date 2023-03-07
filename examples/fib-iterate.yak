@@ -1,0 +1,39 @@
+[]n
+0#iterate {
+    // for i in range(n - 1):
+    2 <-n . 1 ->n
+    <-> . 1 + 1 ->n
+    == ! ? {
+        // a, b = b, a + b
+        // (ba -- bab)
+        <^>
+        
+        // (bab -- (b + a)b)
+        + 
+
+        iterate
+    }
+}
+
+
+1#fib {
+    // if n <= 1:
+    . 1 <= ? {
+        // return n
+        .
+    } : {
+        1 - 1 ->n
+        // a, b = 0, 1
+        0
+        1
+        
+        0 1 ->n
+        iterate
+
+        // return b
+    }
+}
+
+100 . fib
+
+"Fib({3})={1}\n"

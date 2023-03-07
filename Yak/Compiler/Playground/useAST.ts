@@ -1,6 +1,6 @@
 import { useEffect, useState } from "preact/hooks";
-import { Nodes, Token } from "../types.ts";
-import buildAST from "./parse.ts";
+import buildAST from "../../AST/parse.ts";
+import { Nodes, Token } from "../../types.ts";
 
 interface Props {
   tokens: Token[];

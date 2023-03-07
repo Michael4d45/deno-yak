@@ -1,4 +1,4 @@
-import { Stack } from "./../../types.ts";
+import { Stack } from "../../../../types.ts";
 
 export const testArgLength = (expect: number, stack: Stack, name: string) => {
   if (stack.length < expect) {

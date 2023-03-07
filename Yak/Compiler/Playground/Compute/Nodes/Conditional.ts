@@ -1,4 +1,4 @@
-import { ConditionalNode, CONDITIONAL_IF, Stack } from "../../types.ts";
+import { ConditionalNode, CONDITIONAL_IF, Stack } from "../../../../types.ts";
 import { PushComputeType} from "./../types.ts";
 import { testArgLength } from "./Verification.ts";
 

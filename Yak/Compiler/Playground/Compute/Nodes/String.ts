@@ -1,5 +1,5 @@
-import { getBuffer } from "../../../OutputBuffer/useBuffer.ts";
-import { Stack, StringNode } from "../../types.ts";
+import { getBuffer } from "../../../../../OutputBuffer/useBuffer.ts";
+import { Stack, StringNode } from "../../../../types.ts";
 import { testArgLength } from "./Verification.ts";
 
 const calculateString = (

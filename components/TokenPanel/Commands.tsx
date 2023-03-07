@@ -1,4 +1,4 @@
-import { YakType } from "../../Yak/useYak.ts";
+import { YakType } from "../../Yak/Compiler/Playground/useYak.ts";
 
 const Commands = ({ step, run, fast, running, reset }: YakType) => (
   <div class="w-full flex flex-row">

@@ -1,8 +1,8 @@
 import { useEffect, useState } from "preact/hooks";
-import useAST from "./AST/useAST.ts";
-import useCompute from "./Compute/useCompute.ts";
-import tokenizer from "./Tokenizer/index.ts";
-import { Token } from "./types.ts";
+import tokenizer from "../../Tokenizer/index.ts";
+import { Token } from "../../types.ts";
+import useAST from "./useAST.ts";
+import useCompute from "./useCompute.ts";
 
 export type YakType = ReturnType<typeof useYak>;
 

@@ -1,5 +1,5 @@
 import { FunctionComponent } from "preact";
-import { YakType } from "../../../Yak/useYak.ts";
+import { YakType } from "../../../Yak/Compiler/Playground/useYak.ts";
 import Errors from "./Errors.tsx";
 import StackToken from "./StackToken.tsx";
 

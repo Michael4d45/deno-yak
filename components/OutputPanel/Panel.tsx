@@ -1,5 +1,5 @@
-import { Variable } from "../../Yak/Compute/types.ts";
-import { YakType } from "../../Yak/useYak.ts";
+import { Variable } from "../../Yak/Compiler/Playground/Compute/types.ts";
+import { YakType } from "../../Yak/Compiler/Playground/useYak.ts";
 import Console from "./Console.tsx";
 
 const OutputPanel = ({ calcError, stack, variables }: YakType) => (

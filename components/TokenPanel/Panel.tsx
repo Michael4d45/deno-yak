@@ -1,4 +1,4 @@
-import { YakType } from "../../Yak/useYak.ts";
+import { YakType } from "../../Yak/Compiler/Playground/useYak.ts";
 import Commands from "./Commands.tsx";
 import Tokens from "./Tokens/Tokens.tsx";
 

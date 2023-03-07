@@ -268,7 +268,7 @@ export interface VariableDefNode {
   name: string;
 }
 
-interface FunctionCallNode {
+export interface FunctionCallNode {
   type: "FUNCTION_CALL";
   value: string;
 }

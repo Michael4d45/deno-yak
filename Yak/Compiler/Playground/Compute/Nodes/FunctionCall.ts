@@ -1,4 +1,4 @@
-import { ComputeBlock, FunctionDefNode, Stack } from "../../types.ts";
+import { ComputeBlock, FunctionDefNode, Stack } from "../../../../types.ts";
 import { PushComputeType } from "./../types.ts";
 import { testArgLength } from "./Verification.ts";
 

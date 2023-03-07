@@ -1,4 +1,4 @@
-import { YakType } from "../../Yak/useYak.ts";
+import { YakType } from "../../Yak/Compiler/Playground/useYak.ts";
 import Input from "./Input.tsx";
 
 const InputPanel = ({ onSubmit }: YakType) => (
