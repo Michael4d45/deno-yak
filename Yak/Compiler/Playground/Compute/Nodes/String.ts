@@ -20,9 +20,9 @@ const calculateString = (
   const replaced = fragments.map((fragment) => {
     if (typeof fragment === "string") return fragment;
     return args[fragment - 1];
-  });
+  }).join("").replaceAll("\\n", "\n");
 
-  getBuffer().write(replaced.join(""));
+  getBuffer().write(replaced);
 };
 
 export default calculateString;

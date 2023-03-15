@@ -1,7 +1,8 @@
 {
   "tasks": {
     "start": "deno run -A --watch=static/,routes/ dev.ts",
-    "compile": "deno run -A --watch=Yak/Compiler/C++/,examples/fib-iterate.yak Yak/Compiler/C++/main.ts examples/fib-iterate.yak"
+    "compile:cpp": "deno run -A --watch=Yak/Compiler/C++/,static/examples/fib-iterate.yak Yak/Compiler/C++/main.ts static/examples/fib-iterate.yak",
+    "compile:yak": "deno run -A --watch=Yak/Compiler/Yak/,static/examples/fib-iterate.yak Yak/Compiler/Yak/main.ts static/examples/fib-iterate.yak"
   },
   "importMap": "./import_map.json",
   "compilerOptions": {
